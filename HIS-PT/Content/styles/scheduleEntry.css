@@ -1,0 +1,113 @@
+
+.table th {
+   text-align: center; 
+   color:white;  
+}
+.table td{
+    text-align:justify; 
+}
+.dataTables_scrollHeadInner {
+    padding-left: 0px !important;
+}
+
+.table-panel{
+   background-color:gray;
+    min-height: 500px !important;
+}
+
+
+div.status {
+    height:15px;
+    width:15px;
+    border:1px solid black;
+}
+.confirmed {
+   background-color: #B3FFB3;
+}
+.free {
+    background-color: white;
+}
+.reserved {
+     background-color: #FFFFB3;
+}
+
+.done {
+    background-color:  #FFB3B3;
+}
+
+td[rowspan] {
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+
+th, td { 
+  white-space: nowrap; 
+
+}
+div.dataTables_wrapper {
+    margin: 0 auto;
+}
+
+.pull-5 {
+    margin-right:-5px;
+}
+.pull-10 {
+    margin-right:-10px;
+}
+.pull-15 {
+    margin-right:-15px;
+}
+.pull-20 {
+    margin-right:-20px;
+}
+.pull-30 {
+    margin-right:-30px;
+}
+.pull-52 {
+    margin-right:-52px;
+}
+.push-top-5 {
+    margin-top:5px;
+}
+.push-bottom-5 {
+    margin-bottom:5px;
+}
+
+.pull-top-65 {
+    margin-top:-65px;
+}
+.modal-dialog {
+    position: fixed;
+    top: 30% !important;
+    left: 30%;
+}
+
+.panel-heading {
+    font-size:120%;
+}
+span.glyphicon-alert {
+    font-size: 3.2em;
+}
+modal-dialog panel-body alert{
+    margin-bottom:0px !important;
+}
+
+span.glyphicon-saved {
+    font-size: 3.2em;
+}
+span.glyphicon-warning-sign {
+    font-size: 3.2em;
+}
+span.glyphicon-info-sign {
+    font-size: 3.2em;
+}
+.ui-timepicker-wrapper {
+  width: 117px;
+}
+.ui-timepicker-list {
+    font-size:15px;
+}
+.label {
+    text-align:left !important;
+}

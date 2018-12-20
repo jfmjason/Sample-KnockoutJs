@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Unauthorised";
+}
+
+<br />
+<div class="container">
+  <div class="jumbotron alert-warning alert-danger ">
+ 
+    <h3 class="text-center">Error : @ViewBag.Title</h3> 
+      <hr />
+    <p style="font-size:14px;" class="text-center"> 
+    @if (ViewBag.ErrorMessage == null)
+    {
+      @:You don't have access to perform such action. If you think you should have an access for that action please contact IT Department.
+    }else{
+        @ViewBag.ErrorMessage;
+    }
+        </p> 
+  </div>
+</div>

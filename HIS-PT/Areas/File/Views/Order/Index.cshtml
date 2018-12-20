@@ -1,0 +1,621 @@
+﻿@model HIS_PT.Areas.File.ViewModels.RHOrderDisplayViewModel
+
+@{
+    ViewBag.Title = "Patient Orders";
+}
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase col-md-6">Physiotherapy orders</header>
+         <button id="New" class=" btn btn-primary pull-right" data-bind="click:$root.NewOrder">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>New Order
+                </button>
+    </div>
+    <div class="row top5 default-color">
+        <div class="row col-md-12 top20 filter-wrapper">
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">From</label>
+                <div class="col-md-2">
+                    <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                        <input id="fromDate" class="col-md-2 form-control"
+@*                            data-bind="datepicker:$root.FromDateTime,
+                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}" *@
+                              data-bind="datetimepicker:$root.FromDateTime,datepickerOptions:{format: 'DD-MMM-YYYY'}" 
+                            />
+                    </div>
+
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">To</label>
+                <div class="col-md-2">
+                    <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                        <input id="todate" class="col-md-2 form-control"
+                           @* data-bind="datepicker:$root.ToDateTime,
+                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}"*@
+                             data-bind="datetimepicker:$root.ToDateTime,datepickerOptions:{format: 'DD-MMM-YYYY'}" 
+                             />
+                    </div>
+
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">Patient Type</label>
+                <div class="col-md-2">
+                    <select id="patType" class="col-md-1 form-control select2"
+                        data-bind="options:$root.PatientTypes,
+                          optionsValue:'id', 
+                          optionsText:'text',
+                          value:$root.SelectedPatTientType,
+                          select2: {placeholder: 'Select visit date', allowClear: true}">
+                    </select>
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">PIN</label>
+                <div class="col-md-2">
+                    <input class="form-control" data-bind="value:$root.SelectedRegNo,
+                                 select2: {minimumInputLength: 2, query:$root.SearchPin, placeholder:'Search Pin', allowClear: true}" />
+                </div>
+
+        </div>
+        <hr />
+        <div class="col-md-12 top20">
+            <div class="col-md-12 top20">
+                <table class="table" id="RHOrders">
+                    <thead>
+                        <tr>
+                            @*  <th>SlNo. </th>*@
+                            <th>Order No.</th>
+                            <th>Pin</th>
+                            <th>Patient Name</th>
+                            <th>Procedure Start</th>
+                            <th>Procedure End</th>
+                            <th>Operator</th>
+                            <th>Order Date</th>
+                        </tr>
+
+                    </thead>
+                    <tbody data-bind="dataTablesForEach:{data:$root.Orders,dataTableOptions:{paging:true, destroy: true,
+                                                                                            columns:[  
+                                                                                                     {width: '50px'}
+                                                                                                    ,{width: '80px'}
+                                                                                                    ,{width: '200px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                    ,{width: '200px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                   ]
+                    }}"
+                        style="overflow: auto; height: 200px;">
+                        <tr data-bind="click: $root.SelectOrder">
+                            @*<td data-bind="text:SlNo"></td>*@
+                            <td data-bind="text:Id"></td>
+                            <td data-bind="text:PIN"></td>
+                            <td data-bind="text:PatientName"></td>
+                            <td data-bind="text:moment(ProcedureStartdateTime).format('DD-MMM-YYYY hh:mm A')"></td>
+                            <td data-bind="text:moment(ProcedureEnddateTime).format('DD-MMM-YYYY hh:mm A')"></td>
+                            <td data-bind="text:OperatorName"></td>
+                            <td data-bind="text:moment(OrderDateTime).format('DD-MMM-YYYY')"></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="OrderEntry" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200; top: -50px;">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px;">
+
+                <button id="OSave" class="btn-default inverse btn btn-sm  no-border"
+                    data-bind="visible:$root.OrderId()==0,click:$root.CreateOrder">
+                    <span class="glyphicon glyphicon-check"></span>Save
+                </button>
+
+                <button id="OModify" class="btn-default inverse btn btn-sm  no-border" data-bind="visible:$root.OrderId()>0, click:$root.UpdateOrder">
+                    <span class="glyphicon glyphicon-pencil"></span>Modify
+                </button>
+
+                <button id="OCancel" class="btn-default inverse btn btn-sm  no-border" data-bind="visible:$root.OrderId()> 0, click:$root.CancelOrder">
+                    <span class="glyphicon glyphicon-remove"></span>Cancel
+                </button>
+
+                <button id="OClear" class="btn-default inverse btn btn-sm  no-border" data-bind="click:$root.ResetOrder">
+                    <span class="glyphicon glyphicon-erase"></span>Clear
+                </button>
+
+                <button id="OClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-1">
+                            <label class="top5 col-md-12 label reg-label">Patient Type</label>
+                            <div class="col-md-12">
+                                <div class="radio top10">
+                                    <label class="col-md-12 withhover">
+                                        <input type="radio" name="optradio" data-bind="value :1, checked: $root.OrderPatientType , attr: { disabled: $root.OrderId() >0 }">IP</label>
+                                    <label class="col-md-12 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:0, checked: $root.OrderPatientType , attr: { disabled: $root.OrderId() >0} ">OP</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top5 col-md-2 label reg-label">PIN</label>
+                            <div class="col-md-10">
+                                <!-- ko if: $root.OrderPatientType() == 1 -->
+                                <select id="IPPins" class="form-control select2"
+                                    data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'IACRegno', value:$root.OrderIPIDOPID, 
+                                                   select2:{placeholder: 'Select a Pin', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.OrderPatientType() == 0 -->
+                                <div class="input-group col-md-12">
+                                    <input id="OpPinTxt" class="form-control"
+                                        data-bind="textInput:$root.OrderPin,executeOnEnter:$root.GetPatient" />
+                                    <span class="input-group-btn ">
+                                        <button class="btn btn-primary btn-xs glyphicon glyphicon-search" type="submit" style="border-radius: 0px !important;top:0px;"
+                                            data-bind="click:$root.SearchPatient">
+                                        </button>
+                                    </span>
+                                </div>
+                                <!-- /ko -->
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-2 label reg-label">Name</label>
+                            <div class="col-md-10 top5">
+                                <!-- ko if: $root.OrderPatientType() == 1 -->
+                                <select id="SelectPatientNames" class="form-control select2"
+                                    data-bind="
+                                                                     options:$root.Patients, optionsValue:'IPOPID',optionsText:'PatientName', value:$root.OrderIPIDOPID, 
+                                                                     select2:{placeholder: 'Select Patient Name', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.OrderPatientType() == 0 -->
+                                <input id="PatientNameTxt" class="form-control select2" readonly
+                                    data-bind="value:$root.OrderPatientName" />
+                                <!-- /ko -->
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-2 label reg-label">Age</label>
+                            <div class="col-md-4 top5">
+                                <input id="AgeStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderAgeStr" />
+                            </div>
+                            <label class="top10 col-md-2 label reg-label">Sex</label>
+                            <div class="col-md-4 top5">
+                                <input id="SexStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderSexStr" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-2 label reg-label">Category</label>
+                            <div class="col-md-10 top5">
+                                <input id="CategoryStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderCategory" />
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top10 col-md-3 label reg-label">Bed</label>
+                            <div class="col-md-9 top5">
+                                <select id="SelectedBed" class="form-control select2"
+                                    data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.OrderIPIDOPID, 
+                                                                     select2:{placeholder: 'Select Bed', allowClear: true},
+                                               attr: { disabled: $root.OrderPatientType() == 0}">
+                                </select>
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Ward</label>
+                            <div class="col-md-9 top5">
+                                <input id="WardStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderWardStr" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Consultant</label>
+                            <div class="col-md-9 top5">
+                                <input id="ConsultantStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderConsultant1" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Company Code</label>
+                            <div class="col-md-4 top5">
+                                <input id="CompanyCode" class="form-control" readonly
+                                    data-bind="value:$root.OrderCompanyCode" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="top10 col-md-3 label reg-label">Schedule#</label>
+                            <div class="col-md-9 top5">
+                                <select id="SelectOrderNos" class="form-control select2"
+                                    data-bind="options:$root.OrderPTSchedIds, optionsValue:'Id',optionsText:'Text', value:$root.OrderPTSchedule,select2:{placeholder: 'Select Order No', allowClear: true}, attr: { disabled: $root.OrderId() >0}">
+                                </select>
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Date Time</label>
+                            <div class="col-md-9 top5">
+                                <input id="OrderDateTime" class="form-control" readonly
+                                    data-bind="value:$root.OrderDateTime" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Operator</label>
+                            <div class="col-md-9 top5">
+                                <input id="OperatornameStr" class="form-control" readonly
+                                    data-bind="value:$root.OrderOperator" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label" style="margin-left: -380px;">Company Name</label>
+                            <div class="col-md-12 top5">
+                                <input id="CompanynameStr" class="form-control" readonly style="font-size: 10px !important;"
+                                    data-bind="value:$root.OrderCompanyName" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-12  top10">
+                        <div class="col-md-12 top5">
+                            <div class="col-md-12 background-gray">
+                                <ul class="nav nav-tabs nav-justified top5">
+                                    <li class="active"><a data-toggle="tab" href="#tab-Timings">Timings</a></li>
+                                    <li><a data-toggle="tab" href="#tab-Diagnois">Diagnosis</a></li>
+                                    <li><a data-toggle="tab" href="#tab-Remarks">Remarks</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="tab-content col-md-12 background-gray" style="margin-bottom: 10px;">
+                                <div id="tab-Timings" class="col-md-12 tab-pane fade in active">
+                                    <div class="col-md-6">
+                                        <label class="top10 col-md-12 label reg-label">Procedure</label>
+                                        <label class="top10 col-md-2 label reg-label">Start At</label>
+                                        <div class="col-md-5 top5">
+
+                                            <div class="inner-addon right-addon">
+                                                <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+
+
+                                                <input id="ProcedureStartTime" class="form-control" data-bind="attr:{disabled:$root.OrderHasFromTime() != true}, datetimepicker:$root.OrderProcedureStartTime,
+                                                                                                  datepickerOptions:{format:'DD-MMM-YYYY hh:mm A',stepping:15}" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 top5">
+                                            <input type="checkbox" data-bind="value:true, checked:$root.OrderHasFromTime" />
+                                        </div>
+
+                                        <div class="col-md-12"></div>
+                                        <label class="top10 col-md-2 label reg-label">End At</label>
+                                        <div class="col-md-5 top5">
+                                            <div class="inner-addon right-addon">
+                                                <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+
+                                                <input id="ProcedureEndTime" class="form-control"
+                                                    data-bind="attr:{disabled:$root.OrderHasToTime() != true}, 
+                                                            datetimepicker:$root.OrderProcedureEndTime,
+                                                           datepickerOptions:{format:'DD-MMM-YYYY hh:mm A',stepping:15}" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 top5">
+                                            <input type="checkbox" data-bind="value:true, checked:$root.OrderHasToTime" />
+                                        </div>
+                                        <div class="col-md-12"></div>
+                                        <label class="top10 col-md-2 label reg-label">OP Visit No.</label>
+                                        <div class="col-md-5 top5" style="margin-bottom: 10px;">
+                                            <input id="OPvisitNo" class="form-control"
+                                                data-bind="value:$root.OrderOPVisitNo, attr: { disabled: $root.OrderPatientType() == 1}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top20">
+                                        <label class="top20 col-md-3 label reg-label">Consultant</label>
+                                        <div class="col-md-9 top15">
+                                            <select id="SelectConsultant" class="form-control select2"
+                                                data-bind="options:$root.TimingDoctors, optionsValue:'Id',optionsText:'Text', value:$root.OrderDoctorId, 
+                                                                                 select2:{placeholder: 'Select Doctor', allowClear: true}">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12"></div>
+
+                                        <label class="top10 col-md-3 label reg-label">Shifting Nurse</label>
+                                        <div class="col-md-9 top5">
+                                            <select id="SelectShiftNurse" class="form-control select2"
+                                                data-bind="options:$root.TimingNurses, optionsValue:'Id',optionsText:'Text', value:$root.OrderShiftNurseId, 
+                                                                                 select2:{placeholder: 'Select Nurse', allowClear: true}">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12"></div>
+                                        <label class="top10 col-md-3 label reg-label">Reffered By</label>
+                                        <div class="col-md-9 top5">
+                                            <input id="RefferedBy" class="form-control"
+                                                data-bind="value:$root.OrderRefferedBy" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-Diagnois" class="col-md-12 tab-pane fade">
+                                    <br />
+                                    <textarea data-bind="value:$root.OrderDiagnosis" class="col-md-12" rows="4" style="margin-bottom: 10px;"></textarea>
+
+                                </div>
+                                <div id="tab-Remarks" class="col-md-12 tab-pane fade">
+                                    <br />
+                                    <textarea data-bind="value:$root.OrderRemarks" class="col-md-12" rows="4" style="margin-bottom: 10px;"></textarea>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-12 top20">
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Procedure</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Other Therapist</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Technician</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Nurse</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-3 ">
+                                <select id="Procedures"
+                                    class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Procedures, optionsText:'Text', optionsValue:'Id',selectedOptions:$root.OrderProcedures,select2:{placeholder: 'Select Procedures', allowClear: true}, attr: { disabled: $root.OrderId() >0}">
+                                </select>
+                                @* <span data-bind="text:$root.CurrentSchedule.Procedures"></span>*@
+                            </div>
+
+                            <div class="col-md-3 ">
+                                <select id="OTherapist"
+                                    class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Therapist,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.OrderTherapist, select2:{placeholder: 'Select Therapist', allowClear: true}, attr: { disabled: $root.OrderId() >0}">
+                                </select>
+                                @*<span data-bind="text:$root.CurrentSchedule.OtherTherapist"></span>*@
+                            </div>
+                            <div class="col-md-3 ">
+                                <select id="Technicians"
+                                    class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Technicians, optionsText:'Text', optionsValue:'Id', selectedOptions:$root.OrderTechnicians, select2:{placeholder: 'Select Technicians', allowClear: true}, attr: { disabled: $root.OrderId() >0}">
+                                </select>
+                                @*span data-bind="text:$root.CurrentSchedule.Technicians"></span>*@
+                            </div>
+                            <div class="col-md-3 ">
+
+                                <select id="Nurses" class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Nurses,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.OrderNurses, select2:{placeholder: 'Select Nurses', allowClear: true}, attr: { disabled: $root.OrderId() >0}">
+                                </select>
+                                @*  <span data-bind="text:ko.toJSON($root.CurrentSchedule.Nurses)"></span>*@
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-bottom: 10px;">
+                            <div class="col-md-12">
+                                <label class="col-md-12 label reg-label top10">Details of Treatment</label>
+                                <textarea class="col-md-12" rows="2" data-bind="value:$root.OrderTreatmentDetails"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<div id="SearchPatient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <header>Search Patient</header>
+                <button id="SClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style="margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">First Name</label>
+                            <div class="col-md-9">
+                                <input id="SFirstName" class="form-control" data-bind="value:$root.SearchParam.firstName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Middle Name</label>
+
+                            <div class="col-md-9">
+                                <input id="SMiddleName" class="form-control" data-bind="value:$root.SearchParam.middleName" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Last Name</label>
+                            <div class="col-md-9">
+                                <input id="SLastName" class="form-control" data-bind="value:$root.SearchParam.lastName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Family Name</label>
+                            <div class="col-md-9">
+                                <input id="SFamilyName" class="form-control" data-bind="value:$root.SearchParam.familyName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Father Name</label>
+                            <div class="col-md-9">
+                                <input id="SfatherName" class="form-control" data-bind="value:$root.SearchParam.fatherName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Age</label>
+                            <div class="col-md-4">
+                                <input id="SAge" class="form-control"
+                                    data-bind="value:$root.SearchParam.age" />
+                            </div>
+                            <div class="col-md-5">
+                                <select id="SAgeType" class="form-control"
+                                    data-bind="options:$root.AgeTypes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.ageType, 
+                                                   select2: {placeholder: 'Select Option', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Sex</label>
+                            <div class="col-md-9">
+                                <select id="SSex" class="form-control"
+                                    data-bind="options:$root.Sexes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.sex 
+                                    ,select2: {placeholder: 'Select Gender', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+
+                            <label class="top5 col-md-3 label reg-label">Reg. Date</label>
+
+
+
+                            <div class="col-md-4">
+                                <input id="SFrom" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true,datepicker:$root.SearchParam.fromDate,
+                                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}" />
+                            </div>
+                            <label class="top5 col-md-1 label reg-label">To</label>
+                            <div class="col-md-4">
+                                <input id="STo" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true, datepicker:$root.SearchParam.toDate,
+                                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Place</label>
+                            <div class="col-md-9">
+                                <select id="SCity" class="form-control"
+                                    data-bind="options:$root.Cities, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.city,
+                                                select2:{placeholder: 'Select City', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Country</label>
+                            <div class="col-md-9">
+                                <select id="SCountry" class="form-control"
+                                    data-bind="options:$root.Countries, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.country
+                                                   ,select2: {placeholder: 'Select Country', allowClear: true}">
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 top20">
+                            <input type="checkbox" data-bind="value:true, checked:$root.hasDate" style="margin-left: -70px; margin-top: 10px;" />
+                            <button id="SSearch" class="btn btn-primary" data-bind="click:$root.GetPatients" style="margin-left: 60px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-search"></span>Go
+                            </button>
+                            <button id="SClear" class="btn btn-default" data-bind="click:$root.ClearSearchFilters" style="margin-left: 20px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-erase"></span>Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 top20">
+
+                        <div class="col-md-12" style="background-color: #dcdfe0!important;">
+                            <br />
+                            <table id="PatientTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No. </th>
+                                        <th>PIN</th>
+                                        <th>Patient Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Place</th>
+                                        <th>Country</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SearchedPatient,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.SelectPatient">
+                                        <td data-bind="text:SlNo"></td>
+                                        <td data-bind="text:IACRegno"></td>
+                                        <td data-bind="text:PatientName"></td>
+                                        <td data-bind="text:AgeStr"></td>
+                                        <td data-bind="text:Sex"></td>
+                                        <td data-bind="text:Phone"></td>
+                                        <td data-bind="text:CityName"></td>
+                                        <td data-bind="text:CountryName"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<input id="urlAcions" class="hidden" 
+    data-getrhorders ="@Url.Action("getRHOrders")"
+    data-getinpatients ="@Url.Action("GetInpatients")"
+    data-getinpatientdetails ="@Url.Action("GetInpatientDetails")"
+    data-getpatient ="@Url.Action("GetPatient")"
+    data-searchpatient ="@Url.Action("SearchPatient")"
+    data-getptsdoctor ="@Url.Action("getPTSDoctor")"
+    data-getptstechnician ="@Url.Action("getPTSTechnician")"
+    data-getptsphysiotherapist ="@Url.Action("getPTSPhysiotherapist")"
+    data-getptsnurse ="@Url.Action("getPTSNurse")"
+    data-getptsprocedure ="@Url.Action("getPTSProcedure")"
+    data-getemployee="@Url.Action("getEmployee")"
+    data-saverhorder="@Url.Action("Create")"
+    data-updaterhorder="@Url.Action("Update")"
+    data-cancelrhorder="@Url.Action("Cancel")"
+    data-searchpatientpin="@Url.Action("searchPatientPin")"
+    data-getptschedids="@Url.Action("getPTSchedIds")"
+    data-getptschedule="@Url.Action("getPTSchedule")"
+    data-getrhorderbyid="@Url.Action("getRHOrderById")"
+    data-getrhordertherapist="@Url.Action("getRHOrderTherapist")"
+    data-getrhordertechnicians="@Url.Action("getRHOrderTechnicians")"
+    data-getrhordernurses="@Url.Action("getRHOrderNurse")"
+    data-getrhorderprocedures="@Url.Action("getRHOrderProcedures")"
+
+/>
+
+@section Scripts{
+    <script type="text/javascript" src="~/Content/plugins/datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/File/Order.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            var viewModel = new Orders(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+
+@section Styles{
+    <style>
+        div.ui-timepicker-wrapper {
+            width: 8em !important;
+        }
+    </style>
+}

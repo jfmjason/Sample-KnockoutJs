@@ -1,0 +1,487 @@
+﻿@model HIS_PT.Areas.File.ViewModels.PTTreatmentViewModel
+
+
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase col-md-6">Physiotherapy Treatment Sheet</header>
+         <button id="New" class=" btn btn-primary btn-sm pull-right" data-bind="click:$root.NewTreatment">
+                    <span class="glyphicon glyphicon-folder-open"></span>  New Sheet
+         </button>
+    </div>
+    <div class="row top5 default-color">
+        <div class="row col-md-12 top20 filter-wrapper">
+           
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">From</label>
+                <div class="col-md-2">
+                    <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                        <input id="fromDate" class="col-md-2 form-control"
+                            data-bind="datetimepicker:$root.FromDateTime,
+                                datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                    </div>
+
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">To</label>
+                <div class="col-md-2">
+                    <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                        <input id="todate" class="col-md-2 form-control"
+                            data-bind="datetimepicker:$root.ToDateTime,
+                                datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                    </div>
+
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">Patient Type</label>
+                <div class="col-md-2">
+                    <select id="patType" class="col-md-1 form-control select2"
+                        data-bind="options:$root.PatientTypes,
+                          optionsValue:'id', 
+                          optionsText:'text',
+                          value:$root.SelectedPatTientType,
+                          select2: {placeholder: 'Select visit date', allowClear: true}">
+                    </select>
+                </div>
+
+                <label class="top5 col-md-1 label reg-label" style="text-align: center;">PIN</label>
+                <div class="col-md-2">
+                    <input class="form-control" data-bind="value:$root.SelectedRegNo,
+                                 select2: {minimumInputLength: 2, query:$root.SearchPin, placeholder:'Search Pin', allowClear: true}" />
+                </div>
+
+        </div>
+        <hr />
+        <div class="col-md-12 top20">
+            <div class="col-md-12 top20">
+                <table class="table" id="PTTreatments">
+                    <thead>
+                        <tr>
+                            <th>Order No. </th>
+                            <th>Pin</th>
+                            <th>Patient Name</th>
+                            <th>Order DateTime</th>
+                            <th>Operator</th>
+                            <th>Station</th>
+                        </tr>
+
+                    </thead>
+                    <tbody data-bind="dataTablesForEach:{data:$root.PTTreatments ,dataTableOptions:{paging:true, destroy: true,
+                                                                                            columns:[  
+                                                                                                     {width: '50px'}
+                                                                                                    ,{width: '80px'}
+                                                                                                    ,{width: '200px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                    ,{width: '200px'}
+                                                                                                    ,{width: '200px'} ]
+                    }}"
+                        style="overflow: auto; height: 200px;">
+                        <tr data-bind="click:$root.SelectTreatment">
+                            <td data-bind="text:Id"></td>
+                            <td data-bind="text:PIN"></td>
+                            <td data-bind="text:PatientName"></td>
+                            <td data-bind="text:moment(OrderDateTime).format('DD-MMM-YYYY hh:mm A')"></td>
+                            <td data-bind="text:OperatorName"></td>
+                            <td data-bind="text:Station"></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="TreatmentEntry" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200; top: -50px;">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px;">
+
+                <button class="btn-default inverse btn btn-sm  no-border"
+                    data-bind="visible:$root.TreatmentSheet.Id()==0,click:$root.AddTreatment">
+                    <span class="glyphicon glyphicon-check"></span>Save
+                </button>
+
+                <button class="btn-default inverse btn btn-sm  no-border" data-bind="visible:$root.TreatmentSheet.Id()>0, click:$root.UpdateTreatment">
+                    <span class="glyphicon glyphicon-update"></span> Modify
+                </button>
+
+                <button class="btn-default inverse btn btn-sm  no-border" data-bind="visible:$root.TreatmentSheet.Id()> 0, click:$root.Print">
+                    <span class="glyphicon glyphicon-print"></span> Print
+                </button>
+
+                <button class="btn-default inverse btn btn-sm  no-border" data-bind="click:$root.ResetTreatment">
+                    <span class="glyphicon glyphicon-erase"></span> Clear
+                </button>
+
+                <button class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-1">
+                            <label class="top5 col-md-12 label reg-label">Patient Type</label>
+                            <div class="col-md-12">
+                                <div class="radio top10">
+                                    <label class="col-md-12 withhover">
+                                        <input type="radio" name="optradio" data-bind="value :1, checked: $root.TreatmentSheet.PatientType">IP</label>
+                                    <label class="col-md-12 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:0, checked: $root.TreatmentSheet.PatientType">OP</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top5 col-md-2 label reg-label">PIN</label>
+                            <div class="col-md-10">
+                                <!-- ko if: $root.TreatmentSheet.PatientType() == 1 -->
+                                <select id="IPPins" class="form-control select2"
+                                    data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'IACRegno', value:$root.TreatmentSheet.IPIDOPID, 
+                                                   select2:{placeholder: 'Select a Pin', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.TreatmentSheet.PatientType() == 0 -->
+                                <div class="input-group col-md-12">
+                                    <input id="OpPinTxt" class="form-control"
+                                        data-bind="textInput:$root.TreatmentSheet.PIN,executeOnEnter:$root.GetPatient" />
+                                    <span class="input-group-btn ">
+                                        <button class="btn btn-primary btn-xs glyphicon glyphicon-search" type="submit" style="top:0px;border-radius: 0px !important;"
+                                            data-bind="click:$root.SearchPatient">
+                                        </button>
+                                    </span>
+                                </div>
+                                <!-- /ko -->
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-2 label reg-label">Name</label>
+                            <div class="col-md-10 top5">
+                                <!-- ko if: $root.TreatmentSheet.PatientType() == 1 -->
+                                <select id="SelectPatientNames" class="form-control select2"
+                                    data-bind="
+                                                                     options:$root.Patients, optionsValue:'IPOPID',optionsText:'PatientName', value:$root.TreatmentSheet.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Patient Name', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.TreatmentSheet.PatientType() == 0 -->
+                                <input id="PatientNameTxt" class="form-control select2" readonly
+                                    data-bind="value:$root.TreatmentSheet.PatientName" />
+                                <!-- /ko -->
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-2 label reg-label">Age</label>
+                            <div class="col-md-4 top5">
+                                <input id="AgeStr" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.StrAge" />
+                            </div>
+                            <label class="top10 col-md-2 label reg-label">Sex</label>
+                            <div class="col-md-4 top5">
+                                <input id="SexStr" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.StrSex" />
+                            </div>
+                            <div class="col-md-12"></div>
+                           <label class="top10 col-md-2 label reg-label">Therapist</label>
+                            <div class="col-md-10 top5">
+                                <select id="Therapist" class="form-control select2"
+                                    data-bind="options:$root.Therapist,
+                                      optionsValue:'Id', 
+                                      optionsText:'Text',
+                                      value:$root.TreatmentSheet.TherapistId,
+                                      select2: {placeholder: 'Select Therapist', allowClear: true}">
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top10 col-md-3 label reg-label">Bed</label>
+                            <div class="col-md-9 top5">
+                                <select id="SelectedBed" class="form-control select2"
+                                    data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.TreatmentSheet.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Bed', allowClear: true},
+                                               attr: { disabled: $root.TreatmentSheet.PatientType() == 0}">
+                                </select>
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Ward</label>
+                            <div class="col-md-9 top5">
+                                <input id="WardStr" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.StrWard" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Consultant</label>
+                            <div class="col-md-9 top5">
+                                <input id="ConsultantStr" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.ConsultantName" />
+                            </div>
+                            <div class="col-md-12"></div>
+                           
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="top10 col-md-3 label reg-label">Order No</label>
+                            <div class="col-md-9 top5">
+                                <input id="TreatmentId" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.Id" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Date Time</label>
+                            <div class="col-md-9 top5">
+                                <input id="DateTime" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.DateTime" />
+                            </div>
+                            <div class="col-md-12"></div>
+                            <label class="top10 col-md-3 label reg-label">Operator</label>
+                            <div class="col-md-9 top5">
+                                <input id="OperatornameStr" class="form-control" readonly
+                                    data-bind="value:$root.TreatmentSheet.OperatorName" />
+                            </div>
+                            <div class="col-md-12"></div>
+                        </div>
+                    </div>
+
+                    <div class="top10 col-md-12 background-gray">
+                         <div class="col-md-6">
+                              <label class="top10 col-md-12 label reg-label">DIAGNOSIS</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.Diagnosis" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+                         <div class="col-md-6">
+                              <label class="top10 col-md-12 label reg-label">PLAN OF MANAGEMENT</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.PlanOfManagement" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+
+                         <div class="col-md-6">
+                              <label class="col-md-12 label reg-label">BRIEF HISTORY</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.BriefHistory" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+                        <div class="col-md-6">
+                              <label class=" col-md-12 label reg-label">A - GOALS</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.AGoals" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+                          <div class="col-md-6">
+                              <label class="col-md-12 label reg-label">OBJECTIVE EVALUATION / PROBLEMS</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.Objective" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+                          <div class="col-md-6">
+                              <label class="col-md-12 label reg-label">B - TREATMENT</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.BTreatment" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+
+                        <div class="col-md-6">
+                              <label class="col-md-12 label reg-label">ASSESTMENT</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.Assessment" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+
+                        <div class="col-md-6">
+                              <label class="col-md-12 label reg-label">PROGRESS NOTES</label>
+                              <textarea data-bind="value:$root.TreatmentSheet.ProgressNotes" class="col-md-12" rows="3" style="margin-bottom: 10px;resize:none;"></textarea>
+                         </div>
+                         
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<div id="SearchPatient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <header>Search Patient</header>
+                <button id="SClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style="margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">First Name</label>
+                            <div class="col-md-9">
+                                <input id="SFirstName" class="form-control" data-bind="value:$root.SearchParam.firstName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Middle Name</label>
+
+                            <div class="col-md-9">
+                                <input id="SMiddleName" class="form-control" data-bind="value:$root.SearchParam.middleName" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Last Name</label>
+                            <div class="col-md-9">
+                                <input id="SLastName" class="form-control" data-bind="value:$root.SearchParam.lastName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Family Name</label>
+                            <div class="col-md-9">
+                                <input id="SFamilyName" class="form-control" data-bind="value:$root.SearchParam.familyName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Father Name</label>
+                            <div class="col-md-9">
+                                <input id="SfatherName" class="form-control" data-bind="value:$root.SearchParam.fatherName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Age</label>
+                            <div class="col-md-4">
+                                <input id="SAge" class="form-control"
+                                    data-bind="value:$root.SearchParam.age" />
+                            </div>
+                            <div class="col-md-5">
+                                <select id="SAgeType" class="form-control"
+                                    data-bind="options:$root.AgeTypes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.ageType, 
+                                                   select2: {placeholder: 'Select Option', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Sex</label>
+                            <div class="col-md-9">
+                                <select id="SSex" class="form-control"
+                                    data-bind="options:$root.Sexes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.sex 
+                                    ,select2: {placeholder: 'Select Gender', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+
+                            <label class="top5 col-md-3 label reg-label">Reg. Date</label>
+
+
+
+                            <div class="col-md-4">
+                                <input id="SFrom" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true,datetimepicker:$root.SearchParam.fromDate,
+                                                 datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                            </div>
+                            <label class="top5 col-md-1 label reg-label">To</label>
+                            <div class="col-md-4">
+                                <input id="STo" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true, datetimepicker:$root.SearchParam.toDate,
+                                                 datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Place</label>
+                            <div class="col-md-9">
+                                <select id="SCity" class="form-control"
+                                    data-bind="options:$root.Cities, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.city,
+                                                select2:{placeholder: 'Select City', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Country</label>
+                            <div class="col-md-9">
+                                <select id="SCountry" class="form-control"
+                                    data-bind="options:$root.Countries, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.country
+                                                   ,select2: {placeholder: 'Select Country', allowClear: true}">
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 top20">
+                            <input type="checkbox" data-bind="value:true, checked:$root.hasDate" style="margin-left: -70px; margin-top: 10px;" />
+                            <button id="SSearch" class="btn btn-primary" data-bind="click:$root.GetPatients" style="margin-left: 60px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-search"></span>Go
+                            </button>
+                            <button id="SClear" class="btn btn-default" data-bind="click:$root.ClearSearchFilters" style="margin-left: 20px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-erase"></span>Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 top20">
+
+                        <div class="col-md-12" style="background-color: #dcdfe0!important;">
+                            <br />
+                            <table id="PatientTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No. </th>
+                                        <th>PIN</th>
+                                        <th>Patient Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Place</th>
+                                        <th>Country</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SearchedPatient,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.SelectPatient">
+                                        <td data-bind="text:SlNo"></td>
+                                        <td data-bind="text:IACRegno"></td>
+                                        <td data-bind="text:PatientName"></td>
+                                        <td data-bind="text:AgeStr"></td>
+                                        <td data-bind="text:Sex"></td>
+                                        <td data-bind="text:Phone"></td>
+                                        <td data-bind="text:CityName"></td>
+                                        <td data-bind="text:CountryName"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+<input id="urlAcions" class="hidden" 
+    data-getrhorders ="@Url.Action("getRHOrders")"
+    data-getinpatients ="@Url.Action("GetInpatients")"
+    data-getinpatientdetails ="@Url.Action("GetInpatientDetails")"
+    data-getpatient ="@Url.Action("GetPatient")"
+    data-searchpatient ="@Url.Action("SearchPatient")"
+    data-getemployee="@Url.Action("getEmployee")"
+    data-searchpatientpin="@Url.Action("searchPatientPin")"
+    data-gettreatments="@Url.Action("GetPTTreatments")"
+    data-gettreatmentbyid="@Url.Action("GetPTTreatmentById")"
+    data-addtreatment="@Url.Action("AddTreatment")"
+    data-updatetreatment="@Url.Action("UpdateTreatment")"
+    data-printtreatment="@Url.Action("PrintTreatmentSheet")"
+    
+/>
+
+@section Scripts{
+
+    <script type="text/javascript" src="~/Scripts/File/Treatments.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            var viewModel = new Treatments(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+

@@ -1,0 +1,216 @@
+﻿/******Customize CSS-Style per programmer-global-function******/
+
+.dt {
+    cursor:pointer;
+}
+._ipbtn {
+    display:none;
+}
+.navbar-fixed-top {
+    z-index:100 !important;
+}
+input[readonly=true] {
+    border:1px solid #7d7b7b !important;
+    background-color: #DEDEDE !important;
+}
+.table-view {
+    /*background-color:rgba(108, 122, 137, 1);*/
+    /*background-color:#337ab7;*/
+    background-color:rgb(245, 245, 245)!important;
+    /*background-color:rgba(218, 223, 225, 1);*/
+    font-size:12px;
+    color:black;
+}
+    .table-view th {
+        border-color:rgba(44, 62, 80, 0.5)  !important;
+        /*border-bottom:1px solid #ddd !important;*/
+    }
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+	cursor: pointer;
+    background-color :#585858 !important;
+}
+
+td.btnEdit {
+    /*background: url("/ClinicalTraining/Images/report.png") no-repeat center center;*/
+    background: url("/Images/edit.png") no-repeat center center;
+    cursor: pointer;
+    background-size: 22px 22px;
+}
+
+.row_green tr {
+    background-color: #B3FFB3  !important;
+}
+
+.priceeditor table.dataTable td {
+    text-align: center;
+}
+.row_red {
+    background-color: #FFB3B3;
+}
+
+.row_yellow {
+    background-color: #FFFFB3;
+}
+
+.row_green {
+    background-color: #B3FFB3;
+}
+
+.row_orange tr {
+    background-color: #FFB300;
+}
+
+.row_blue {
+    background-color: #91E1FF;
+}
+
+.datepicker {
+    z-index: 1151 !important;
+}
+
+.row_red {
+    background-color: #FFB3B3;
+}
+
+.row_yellow {
+    background-color: #FFFFB3;
+}
+
+.row_green {
+    background-color: #B3FFB3;
+}
+
+.row_orange {
+    background-color: #FFB300;
+}
+
+.bed {
+    width: 70px;
+    height: 70px;
+}
+
+.bed-cont {
+    text-align: center;
+    cursor: pointer;
+}
+
+.priceeditor {
+    text-align: center;
+}
+.code-td {
+    width:80px;height: 28px;padding-top:0px;padding-bottom:0px;
+}
+.integer-td {
+    width:80px;height: 28px;padding-top:0px;padding-bottom:0px;
+    text-align: center;
+}
+
+.remarks-td {
+    width:200px;height: 28px;padding-top:0px;padding-bottom:0px;
+    text-align: left;
+}
+.unit-td {
+    width:100px;height: 28px;padding-top:0px;padding-bottom:0px;
+    text-align: left;
+}
+.price-td {
+    width:80px;height: 28px;padding-top:0px;padding-bottom:0px;
+    text-align: right;
+}
+.numericformat {
+    text-align: center;
+}
+.table-bordered {
+    width: 100%;
+    cursor: pointer;
+}
+.rdio {
+    cursor:pointer;
+    width:17px;
+    height:17px;
+}
+
+.select2-hidden-accessible {
+    display: none;
+}
+
+div.status {
+    height:15px;
+    width:15px;
+    border:1px solid black;
+}
+
+.confirmed {
+   background-color: #B3FFB3;
+}
+.free {
+    background-color: white;
+}
+.reserved {
+     background-color: #FFFFB3;
+}
+
+.done {
+    background-color:  #FFB3B3;
+}
+
+.select2-container.form-control {
+    padding: 0px !important;
+    border:none !important;
+}
+.dataTables_scrollHeadInner {
+    padding-left: 0px !important;
+}
+
+.ui-helper-center {
+    text-align: center;
+}
+
+.push-top-5 {
+    margin-top:5px;
+}
+.push-top-10 {
+    margin-top:5px;
+}
+.push-top-15 {
+    margin-top:15px;
+}
+.push-top-20 {
+    margin-top:20px;
+}
+.push-bottom-5 {
+    margin-bottom:5px;
+}
+.push-bottom-10 {
+    margin-bottom:10px;
+}
+.push-bottom-15 {
+    margin-bottom:15px;
+}
+.push-bottom-20 {
+    margin-bottom:20px;
+}
+.panel-heading {
+
+    background-color:#2980b9;
+    color:white;
+}
+
+.panel-border-blue {
+    border-color:#2980b9 !important;
+    border: 1px solid;
+}
+.heading-text {
+        font-size: 120% !important;
+}
+.filter-wrapper {
+   padding-top:15px;
+   padding-bottom:15px;
+   background-color: #c6dae4;
+   width:99%;
+   margin:0.5%;
+}

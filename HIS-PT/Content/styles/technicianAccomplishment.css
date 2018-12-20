@@ -1,0 +1,24 @@
+div.dataTables_filter label {
+    font-weight:bold;
+}
+div.dataTables_filter input {
+    margin-left: 19px;
+    height: 28px;
+    font-weight:normal;
+}
+
+.dataTables_scroll {
+    border: 1px solid;
+    border-color: #585858!important;
+}
+.search {
+    margin-left:15px;
+}
+
+.table tbody tr td {
+    font-size: 11px!important;
+}
+.table tbody tr td.dataTables_empty {
+
+    font-size:14px !important;
+}

@@ -1,0 +1,26 @@
+/*
+	Created by: SGH IT
+	Created On: June 09, 2015
+	Updated On: June 09, 2015
+*/
+html,body{
+	height:100%;
+}
+.it_image_header_toolbar{
+text-align:right;
+	padding:5px;
+	width:100%;
+	background-color:#ddd;
+}
+.it_image_viewer_canvas{
+	
+	width:100%;
+	height: calc(100% - 40px);
+	background-color:#444;
+}
+#it_image_viewer_container{
+	width:100%;
+	height:100%;
+	margin:auto;
+	background-color:#333;
+}

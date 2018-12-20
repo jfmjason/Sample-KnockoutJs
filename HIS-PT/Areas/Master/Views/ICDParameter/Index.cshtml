@@ -1,0 +1,328 @@
+﻿@model HIS_PT.Areas.Master.ViewModels.ICDParameterViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase">ICD - Physiotherapy Parameters Mapping</header>
+    </div>
+
+    <div class="row top5 default-color">
+
+        <div class="col-md-12 top15">
+            <label class="top5 col-md-1 label reg-label">Tab Name</label>
+            <div class="col-md-3">
+                <select class="form-control select2"
+                    data-bind="options:$root.PhysioTabs, optionsValue:'Id',optionsText:'TabName', value:$root.SelectedPhysioTab, 
+                                                   select2:{placeholder: 'Select Examination Tab', allowClear: true}">
+                </select>
+            </div>
+
+            <label class="top5 col-md-1 label reg-label">Examination</label>
+            <div class="col-md-3">
+                <select class="form-control select2"
+                    data-bind="options:$root.PhysioExams, optionsValue:'Id',optionsText:'Name', value:$root.SelectedExam, 
+                                                   select2:{placeholder: 'Select Examination', allowClear: true}">
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button id="New" class=" btn btn-primary btn-xs" data-bind="click:$root.NewEntry">
+                    <span class="glyphicon glyphicon-plus"></span>Add 
+                </button>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="col-md-12 background-navyblue top10" style="margin-bottom: 10px;">
+                <div class="col-md-12 default-color top10" style="margin-bottom: 10px;">
+                    <br />
+                    <table id="PatientTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Code </th>
+                                <th>Description</th>
+                                <th>Exam Name</th>
+                                <th>Tab Name</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+                        <tbody data-bind="dataTablesForEach:{data:$root.ICDDisplay,dataTableOptions:{paging:true,destroy: true, 'columns': [{ 'width': '8%' },null,{'width': '18%'},{'width': '15%'},{'width': '10%'}]}}" style="overflow: auto; height: 200px;">
+                            <tr>
+                                <td data-bind="text:Code"></td>
+                                <td data-bind="text:Description"></td>
+                                <td data-bind="text:ExamName"></td>
+                                <td data-bind="text:TabName"></td>
+                                <td>
+                                 
+                                    <a data-bind="click:$root.SelectEditICD" > <span class="glyphicon glyphicon-edit"></span> Edit</a>
+                                     |
+                                    <a data-bind="click:$root.RemoveICD10" > <span class="glyphicon glyphicon-remove"></span> Remove</a>
+                                   
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row default-color"></div>
+</div>
+
+
+<div id="ICDEntry" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 70%; z-index: 1200; top: -45px;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                 <button class="btn-default inverse btn btn-sm no-border" data-bind="click:$root.AddICD10,visible:$root.EditMode() == false" style="margin-top: 0px;">
+                    <span class="glyphicon glyphicon-save"></span> Save
+                </button>
+                <button class="btn-default inverse btn btn-sm no-border" data-bind="click:$root.UpdateICD10,visible:$root.EditMode() == true" style="margin-top: 0px;">
+                    <span class="glyphicon glyphicon-edit"></span> Update
+                </button>
+                  <button class="btn-default inverse btn btn-sm no-border" data-bind="click:$root.ClearEntry(),visible:$root.EditMode() == false" style="margin-top: 0px;">
+                    <span class="glyphicon glyphicon-erase"></span> Clear
+                </button>
+                <button class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style="margin-top: 0px;">
+                    <span class="glyphicon glyphicon-off"></span> Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="top5 col-md-12 label reg-label">Selected ICD</label>
+                        <div class="col-md-10 default-color top5" style="margin-bottom: 10px;">
+                            <br />
+                            <table id="SelectedIcdTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Code </th>
+                                        <th>Description</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SelectedICDCodes,dataTableOptions:{paging:false,searching:false, ordering:false, info:false, scrollY:'140px',destroy: true,language: {emptyTable: 'No selected ICD'},'columns': [{ 'width': '12%' },{'width': '88%'}]}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.RemoveSelectedCode">
+                                        <td data-bind="text:Code"></td>
+                                        <td data-bind="text:Description"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="col-md-2 top20">
+                            <button class=" btn btn-primary btn-xs" data-bind="click:function(){return $root.IcdSearch('show')},visible:$root.EditMode() == false">
+                                <span class="glyphicon glyphicon-search"></span> ICD Codes 
+                            </button>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-10">
+                            <label class="top10 col-md-1 label  col-md-offset-7 reg-label">Tab Name</label>
+                            <div class="col-md-4 top5">
+                                <select class="form-control select2"
+                                    data-bind="options:$root.PhysioTabs, optionsValue:'Id',optionsText:'TabName', value:$root.ICDEntry.PhysioTab, 
+                                                                   select2:{placeholder: 'Select Examination Tab', allowClear: true}, attr:{disabled:$root.EditMode() == true}">
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12  default-color ">
+                        <div class="col-md-5 background-gray top10" style="margin-bottom: 10px;">
+                            <h6><strong>Available</strong></h6>
+                            <table class="table">
+                                <thead class="hidden">
+                                    <tr>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.ICDEntry.AvailablePhysioExams,dataTableOptions:{paging:false,searching:false, ordering:false, info:false, scrollY:'190px',destroy: true,language: {emptyTable: 'No available examinations'}}}" style="overflow: auto; height: 200px;">
+                                    <tr class="alert-warning" data-bind="click:$root.SelectAvailableExam">
+                                        <td data-bind="text:Name"></td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-2 top10">
+
+                            <div class="col-md-12 top75"></div>
+                            <button class="btn btn-default btn-xs col-md-12" data-bind="click:$root.SelectAllExam">
+                                <span class="glyphicon glyphicon-arrow-left"></span> Select All 
+                            </button>
+                            <div class="col-md-12 top10"></div>
+                            <button class="btn btn-default btn-xs col-md-12" data-bind="click:$root.RemoveAllExam">
+                                Remove All <span class="glyphicon glyphicon-arrow-right"></span>
+                            </button>
+
+
+                        </div>
+                        <div class="col-md-5 top10 background-gray" style="margin-bottom: 10px;">
+                            <h6><strong>Selected</strong></h6>
+                            <table class="table">
+                                <thead class="hidden">
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.ICDEntry.SelectedPhysioExams,dataTableOptions:{paging:false,searching:false, ordering:false, scrollY:'190px', info:false,destroy: true, language: {emptyTable: 'No selected examination'}}}" style="overflow: auto; height: 200px;">
+                                    <tr class="alert-warning" data-bind="click:$root.RemoveSelectedExam">
+                                        <td data-bind="text:Name"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<div id="ICDSearch" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 80%; z-index: 1200; top: -45px;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <header>Search ICD</header>
+                <button class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style="margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="top5 col-md-1 label reg-label">Search</label>
+                        <div class="col-md-4" >
+                             <input class="form-control" data-bind="textInput:$root.SearchIcdInput, enterkey:$root.SearchIcd10, hasFocus: $root.SearchFocus" />
+                        </div>
+
+                        <div class="col-md-7 top5">
+                              <div class="radio top10">
+                                    <label class="col-md-2 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:0, checked:$root.SeachIcdOption">Code</label>
+                                    <label class="col-md-2 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:1, checked:$root.SeachIcdOption">Description</label>
+                                </div>
+
+                        </div>
+
+                       
+                        <div class="col-md-12 default-color top5" style="margin-bottom: 10px;">
+                            <div id="icdtree" data-bind="jstree:{ data: JSTree.treeData }, visible: $.trim($root.SearchIcdInput()) == ''" style="height: 280px; overflow: auto;margin-bottom:5px;">
+                            </div>
+
+                            <div class="col-md-12" data-bind="visible: $.trim($root.SearchIcdInput()) != ''">
+                                <br />
+                            <table  class="table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Code </th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SearchedICDs,dataTableOptions:{paging:false, scrollY:'210px',searching:false, destroy: true,language: {emptyTable: 'ICD not found'}}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.SelectDeepSearchCode">
+                                        <td data-bind="text:Code"></td>
+                                        <td data-bind="text:Description"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12 top5 background-orange" style="margin-bottom: 10px;">
+                            <br />
+                            <table id="IcdTable" class="table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Code </th>
+                                        <th>Description</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SelectedSearchICDs,dataTableOptions:{paging:false,searching:false, ordering:false, info:false, scrollY:'140px',destroy: true,language: {emptyTable: 'No selected ICD'}}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.RemoveTreeCode">
+                                        <td data-bind="text:Code"></td>
+                                        <td data-bind="text:Description"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="col-md-12">
+                           
+                              <button class="col-md-offset-5 col-md-1 btn-primary  btn btn-sm no-border" data-bind="click:$root.SelectTreeCode, enable: $root.JSTree.isNodeSelected() == true && $.trim($root.SearchIcdInput()) == ''">
+                                <span class="glyphicon glyphicon-star"></span> Select
+                             </button>
+                            
+                            <button class="btn-primary col-md-1 btn btn-sm no-border"  data-bind="click:$root.SelectSearchCode, enable: $root.SelectedSearchICDs().length > 0 ">
+                                <span class="glyphicon glyphicon-ok"></span> OK
+                             </button>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<input id="urlAcions" class="hidden" 
+    data-getphysioicd ="@Url.Action("GetPhysioICDS")"
+    data-getphysioexam ="@Url.Action("GetPhysioExam")"
+    data-getphysioicd34 ="@Url.Action("GetICD4and3")"
+    data-geticd10bycode ="@Url.Action("GetICD10ByCode")"
+    data-geticd10bydesc ="@Url.Action("GetICD10ByDescription")"
+    data-getconfigphysioexam ="@Url.Action("GetConfiguredPhysioExams")"
+    data-addicd10="@Url.Action("AddICD10")"
+    data-removeicd10="@Url.Action("DeleteICD10")"
+    data-updateicd10="@Url.Action("UpdateICD10")"
+
+
+    
+    
+/>
+
+
+@section Scripts{
+
+    <script type="text/javascript" src="~/Scripts/Master/PhycioICD.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            var viewModel = new PhycioICDs(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+
+

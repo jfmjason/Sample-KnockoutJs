@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Error";
+}
+
+<h1>@ViewBag.Title</h1>
+ <div>
+     @if (ViewBag.ErrorMessage == null)
+    {
+      @:You don't have access to perform such action. If you think you should have an access for that action please contact IT Department:
+    }else{
+        @ViewBag.ErrorMessage;
+    }
+    
+ </div>
+
+

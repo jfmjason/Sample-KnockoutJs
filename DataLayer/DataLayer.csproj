@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataLayer</RootNamespace>
+    <AssemblyName>DataLayer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HISCommonUtilities">
+      <HintPath>..\_dll\HISCommonUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\MicosoftReportViewerWebForms_v11.1.0.1\lib\Microsoft.ReportViewer.WebForms.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Constant.cs" />
+    <Compile Include="Common\CustomDBHelper.cs" />
+    <Compile Include="Common\CustomExtensions.cs" />
+    <Compile Include="Common\HISSecurity.cs" />
+    <Compile Include="Data\AgeTypeDB.cs" />
+    <Compile Include="Data\CityDB.cs" />
+    <Compile Include="Data\ICD10DB.cs" />
+    <Compile Include="Data\CountryDB.cs" />
+    <Compile Include="Data\DesignationDB.cs" />
+    <Compile Include="Data\EmployeeDB.cs" />
+    <Compile Include="Data\ICDDetailDB.cs" />
+    <Compile Include="Data\IPICDDetailDB.cs" />
+    <Compile Include="Data\LocationDB.cs" />
+    <Compile Include="Data\M_PhysioExaminationDB.cs" />
+    <Compile Include="Data\OrganizationDetailsDB.cs" />
+    <Compile Include="Data\PatientDB.cs" />
+    <Compile Include="Data\PhysioExaminationDB.cs" />
+    <Compile Include="Data\PhysioExaminationDetailDB.cs" />
+    <Compile Include="Data\PhysioICDDB.cs" />
+    <Compile Include="Data\PTDischargeDB.cs" />
+    <Compile Include="Data\PTDoctorDB.cs" />
+    <Compile Include="Data\PTEmployeeDB.cs" />
+    <Compile Include="Data\PTProcedureDB.cs" />
+    <Compile Include="Data\PTScheduleDB.cs" />
+    <Compile Include="Data\PTTreatmentDB.cs" />
+    <Compile Include="Data\RHOrderDB.cs" />
+    <Compile Include="Data\RHOrderDetailDB.cs" />
+    <Compile Include="Data\SexDB.cs" />
+    <Compile Include="Data\StationDB.cs" />
+    <Compile Include="Model\AgeType.cs" />
+    <Compile Include="Model\City.cs" />
+    <Compile Include="Model\ClinicalDetails.cs" />
+    <Compile Include="Model\ClinicalTestOrder.cs" />
+    <Compile Include="Model\ICD10.cs" />
+    <Compile Include="Model\ICDDetail.cs" />
+    <Compile Include="Model\JSTreeItem.cs" />
+    <Compile Include="Model\M_PhysioExamination.cs" />
+    <Compile Include="Model\OrderedProcedures.cs" />
+    <Compile Include="Model\PhysioExamination.cs" />
+    <Compile Include="Model\PhysioExaminationDetails.cs" />
+    <Compile Include="Model\PhysioICD.cs" />
+    <Compile Include="Model\PhysioICDDisplay.cs" />
+    <Compile Include="Model\PTDischarge.cs" />
+    <Compile Include="Model\PTTreatmentDisplay.cs" />
+    <Compile Include="Model\PTTreatmentSheet.cs" />
+    <Compile Include="Model\RHOrder.cs" />
+    <Compile Include="Model\Country.cs" />
+    <Compile Include="Model\DateTimeInterval.cs" />
+    <Compile Include="Model\Department.cs" />
+    <Compile Include="Model\Designation.cs" />
+    <Compile Include="Model\DHTMLXSection.cs" />
+    <Compile Include="Model\Doctor.cs" />
+    <Compile Include="Model\DoctorVisit.cs" />
+    <Compile Include="Model\Employee.cs" />
+    <Compile Include="Model\Inpatient.cs" />
+    <Compile Include="Model\Location.cs" />
+    <Compile Include="Model\ModuleAccessModel.cs" />
+    <Compile Include="Model\OrganizationDetails.cs" />
+    <Compile Include="Model\Patient.cs" />
+    <Compile Include="Model\ScheduleForOrder.cs" />
+    <Compile Include="Model\RHOrderDisplay.cs" />
+    <Compile Include="Model\PTPatient.cs" />
+    <Compile Include="Model\PTProcedure.cs" />
+    <Compile Include="Model\PTSchedule.cs" />
+    <Compile Include="Model\PTScheduleDisplay.cs" />
+    <Compile Include="Model\PTScheduleRequest.cs" />
+    <Compile Include="Model\Sex.cs" />
+    <Compile Include="Model\ShiftSchedule.cs" />
+    <Compile Include="Model\Station.cs" />
+    <Compile Include="Model\Test.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

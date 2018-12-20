@@ -1,0 +1,10 @@
+.table tbody tr td {
+    font-size: 12px!important;
+}
+.dataTables_scroll {
+    border:1px solid; 
+    border-color:#585858!important;
+}
+.dataTables_filter {
+    margin-left:0px;
+}

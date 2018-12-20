@@ -1,0 +1,73 @@
+.search {
+    margin-left:10px;
+    padding-top: 10px;
+}
+.table-container table tr th:first-child{
+    min-width: 80px !important;
+    
+}
+.table-container table th {
+    min-width: 150px !important;
+    max-height: 10px;
+    text-align: center !important;
+}
+.table-container table tr td:first-child {
+    color:white;
+    height:10px !important;
+    background-color:gray; 
+}
+
+.dataTables_scrollHeadInner table th {
+    min-width: 150px !important;
+    max-height: 10px;
+    text-align: center !important;
+}
+
+.table-panel{
+   background-color:gray;
+    min-height: 450px !important;
+    width:100%;
+}
+
+div.table-container {
+    background-color:white;
+    height: 450px !important;
+}
+
+div.status {
+    height:15px;
+    width:15px;
+    border:1px solid black;
+}
+.confirmed {
+   background-color: #B3FFB3;
+}
+.free {
+    background-color: white;
+}
+.reserved {
+     background-color: #FFFFB3;
+}
+
+.done {
+    background-color:  #FFB3B3;
+}
+
+td[rowspan] {
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+th, td { 
+  white-space: nowrap; 
+
+}
+div.dataTables_wrapper {
+  margin: 0 auto;
+}
+.ui-timepicker-wrapper {
+  width: 150px;
+}
+.ui-timepicker-list {
+    font-size:15px;
+}

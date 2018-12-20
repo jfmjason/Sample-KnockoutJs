@@ -1,0 +1,68 @@
+﻿@model HIS_PT.Areas.Report.ViewModels.ScheduleReportViewModel
+
+@{
+    ViewBag.Title = "MonthlyWise";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase col-md-8">Schedule Report - monthly wise</header>
+
+      
+        <button class=" btn btn-primary btn-sm pull-right" data-bind="click:$root.PrintPreview">
+                    <span class="glyphicon glyphicon-print"></span> Generate
+        </button>
+
+        
+    </div>
+
+    <div class="row top5 default-color">
+
+        <div class="col-md-12 top15">
+            <div class="col-md-6 top5">
+                 <div class="col-md-12">
+                    <label class="top5 col-md-2 label reg-label">Month</label>
+                    <div class="col-md-4">
+                        <div class="inner-addon right-addon">
+                            <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                            <input class="form-control select2" data-bind="datepicker:$root.FromDate,
+                                                 datepickerOptions:{format: 'MM yyyy', viewMode: 'months',minViewMode: 'months'}" />
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-12"></div>
+            </div>
+
+            <div id="pdfwrapper" class="col-md-12 top10" data-bind="style:{'height':$root.ReportHeight,background:'gray','margin-bottom':'10px'}">
+              
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row default-color"></div>
+</div>
+
+<input id="urlAcions" class="hidden" 
+    data-searchpatient ="@Url.Action("searchPatientPin")"
+    data-printpreview ="@Url.Action("MonthlyWisePreview")"
+     />
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/Content/plugins/datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/Report/ScheduleMonthlyReport.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            var viewModel = new Report(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+

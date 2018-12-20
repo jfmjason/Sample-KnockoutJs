@@ -1,0 +1,684 @@
+﻿@model HIS_PT.Areas.File.ViewModels.PTScheduleViewModel
+
+@{
+    ViewBag.Title = "Patient Schedules";
+}
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase col-md-5">Today's Schedule</header>
+
+         <button id="New" class=" btn btn-primary btn-sm pull-right" data-bind="click:$root.ShowPatDetails">
+                    <span class="glyphicon glyphicon-pencil"></span> New appointment
+          </button>
+    </div>
+    <div class="row top5 default-color">
+        <div class="col-md-12 filter-wrapper" data-bind="visible:$root.FilterOn() == false">
+            <label class="top5 col-md-1 label reg-label" style="text-align: center;">Date</label>
+            <div class="col-md-2">
+                <div class="inner-addon right-addon">
+                    <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                    <input id="curDate" class="col-md-2 form-control"
+                     @*   data-bind="datepicker:$root.CurrentDate,
+                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}"*@
+                          data-bind="datetimepicker:$root.CurrentDate,datepickerOptions:{format: 'DD-MMM-YYYY'}" 
+                         />
+                </div>
+
+            </div>
+
+            <label class="top5 col-md-1 label reg-label">Patient Type</label>
+            <div class="col-md-2">
+                <select id="patType" class="col-md-1 form-control select2"
+                    data-bind="options:$root.PatientTypes,
+                          optionsValue:'id', 
+                          optionsText:'text',
+                          value:$root.SelectedPatTientType,
+                          select2: {placeholder: 'Select visit date', allowClear: true}">
+                </select>
+            </div>
+             <label class="top5 col-md-1 label reg-label" style="text-align: center;">Therapist</label>
+            <div class="col-md-4">
+                 <select id="therapist" class="col-md-1 form-control select2" data-bind="options:$root.FilterTherapist,
+                          optionsValue:'Id', 
+                          optionsText:'Text',
+                          value:$root.FilterSelectedTherapistId,
+                          select2: {placeholder: 'ALL THERAPIST', allowClear: true}">
+                </select>
+            </div>
+        
+             <a data-bind="click:$root.ToggleFilter" style="cursor:pointer;" class="pull-right"><i class="glyphicon glyphicon-search" > </i> Search </a>
+        </div>
+        <div class="col-md-12 filter-wrapper" data-bind="visible:$root.FilterOn() == true">
+            <label class="top5 col-md-1 label reg-label" style="text-align: center;">PIN</label>
+             <div class="col-md-4">
+                    <input class="form-control" data-bind="value:$root.SelectedRegNo,
+                                 select2: {minimumInputLength: 2, query:$root.SearchPin, placeholder:'Search Pin', allowClear: true}" />
+              </div>
+              
+            <button class="btn btn-xs  btn-primary" data-bind="click:$root.SearchSchedule"><i class="glyphicon glyphicon-search"></i> Go</button>
+              
+             <a data-bind="click:$root.ToggleFilter" style="cursor:pointer;" class="pull-right"><i class="glyphicon glyphicon-arrow-left" > </i> Back </a>
+        </div>
+        <hr/>
+        <div class="col-md-12 top20">
+
+
+            <table class="table" id="PTSchedules">
+                <thead>
+                    <tr>
+                        <th>No. </th>
+                        <th>PIN </th>
+                        <th>Patient Name</th>
+                        <th>Patient Type</th>
+                        <th>Procedure Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Remarks</th>
+                    </tr>
+
+                </thead>
+                <tbody data-bind="dataTablesForEach:{data:$root.Schedules,dataTableOptions:{paging:true,destroy: true,language:{searchPlaceholder:'PIN / Patient Name . . . .', sSearch :'Filter'}}}" style="overflow: auto; height: 200px;">
+                    <tr data-bind="css:{'alert-warning':ReservedConfirmed == 1, 'alert-success':ReservedConfirmed == 2},
+                                   click: $root.SelectSchedule">
+                        <td data-bind="text:SlNo"></td>
+                        <td data-bind="text:PIN"></td>
+                        <td data-bind="text:PatientName"></td>
+                        <td data-bind="text:PatientType"></td>
+                        <td data-bind="text:moment(ProcedureDate).format('DD-MMM-YYYY')"></td>
+                        <td data-bind="text:moment(FromTime).format('hh:mm A')"></td>
+                        <td data-bind="text:moment(ToTime).format('hh:mm A')"></td>
+                        <td data-bind="text:Remarks"></td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+             <div class=" top5" style="padding-bottom:20px;">
+                <label class="dlabel reg-label" >
+                    Confirmed 
+                        <span class="badge alert-success" data-bind="text:$root.ConfirmedCount"></span>
+                </label>
+
+                <label class="dlabel reg-label " style="margin-left: 20px;">
+                    Reserved 
+                        <span class="badge alert-warning" data-bind="text:$root.ReservedCount"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="SchedDetail" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 80%; z-index: 1200;">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px;">
+
+                <button id="Save" class=" btn btn-primary inverse no-border btn-sm"
+                     data-bind="visible: $root.CurrentSchedule.Id() <= 0, click:$root.SaveSchedule">
+                    <span class="glyphicon glyphicon-check"></span> Save
+                </button>
+
+                <button id="Modify" class="btn btn-primary no-border inverse btn-sm"
+                           data-bind="visible: $root.CurrentSchedule.Id() > 0, click:$root.UpdateSchedule">
+                    <span class="glyphicon glyphicon-pencil"></span> Modify
+                </button>
+
+                <button id="Cancel" class="btn btn-primary no-border inverse btn-sm"
+                        data-bind="click:$root.CancelSchedule, visible:$root.CurrentSchedule.Id() > 0">
+                    <span class="glyphicon glyphicon-remove"></span> Cancel
+                </button>
+
+                <button id="Clear" class="btn-primary no-border inverse btn btn-sm"
+                         data-bind="click:$root.ResetSchedDetails, visible: $root.CurrentSchedule.Id() == 0">
+                    <span class="glyphicon glyphicon-erase"></span>Clear
+                </button>
+
+                <button id="Close" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="col-md-2">
+                            <label class="top5 col-md-2 label reg-label">Procedure Date</label>
+                        </div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-7">
+                            <div class="col-md-5 pull-right">
+                                <input id="BookingDate" class="form-control " data-bind="value:$root.BookingDate" readonly />
+                            </div>
+                            <label class="top5 row col-md-3 pull-right label reg-label">Booking Date: </label>
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                         @*   <div class="input-group date" data-provide="datepicker">
+                                <input type="text" class="form-control">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-th"></span>
+                                </div>
+                            </div>*@
+
+                            <div class="inner-addon right-addon">
+                                <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                                <input id="ProcedureDate" class="col-md-2 form-control"
+           @*                         data-bind="datepicker:$root.ProcedureDate,
+                                               datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}"*@
+                                       data-bind="datetimepicker:$root.ProcedureDate,datepickerOptions:{format: 'DD-MMM-YYYY'}" 
+                                     />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="ShowRequest" class="btn btn-primary btn-xs"
+                                data-bind="click:$root.ShowRequestPtSchedule">
+                                <span class="glyphicon glyphicon-search"></span> Show Request
+                            </button>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="col-md-5 pull-right">
+                                <input id="Operator" class="form-control " data-bind="value:$root.Operator" readonly />
+                            </div>
+                            <label class="top5 col-md-3 row pull-right label reg-label">Operator: </label>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-5 top20">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">Therapist</label>
+
+                            <div class="col-md-10">
+                                <select id="Therapist"
+                                    class="form-control select2"
+                                    data-bind="options:$root.Therapist,optionsText:'Text', optionsValue:'Id' , value:$root.CurrentSchedule.TherapistId,
+                                               select2:{}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">Doctor</label>
+
+                            <div class="col-md-10">
+                                <select id="Doctor"
+                                    class="form-control select2"
+                                    data-bind="options:$root.Doctors,optionsText:'Text', optionsValue:'Id', value:$root.CurrentSchedule.DoctorId, select2:{}">
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">From</label>
+
+                            <div class="col-md-4">
+                                 <div class="inner-addon right-addon">
+                                  <i class="glyphicon glyphicon-time" style="z-index: 2;"></i>
+                  
+                                <input id="FromTime" class="timepicker form-control" placeholder=" --:-- AM"
+                                    data-bind="value:$root.FromTime" />
+                                @*<span data-bind="text:$root.FromTime"></span>*@
+                                     </div>
+                            </div>
+                            <label class="top5 col-md-2 label reg-label">To</label>
+
+                            <div class="col-md-4">
+                                 <div class="inner-addon right-addon">
+                                  <i class="glyphicon glyphicon-time" style="z-index: 2;"></i>
+                  
+                                <input id="ToTime" class="timepicker form-control" placeholder=" --:-- PM"
+                                    data-bind="value:$root.ToTime" />
+                                @*<span data-bind="text:$root.ToTime"></span>*@
+                                     </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">Status</label>
+
+                            <div class="col-md-7">
+                                <select id="Status" class="form-control select2"
+                                    data-bind="options:$root.Status, optionsValue:'id', optionsText:'text', value:$root.CurrentSchedule.ReservedConfirmed, select2:{}">
+                                </select>
+                                @*<span data-bind="text:$root.CurrentSchedule.ReservedConfirmed"></span>*@
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-1 label reg-label">Remarks</label>
+                            <div class="col-md-12">
+                                <textarea id="Remarks" class="col-md-12" style="resize: none;"
+                                    data-bind="textInput:$root.CurrentSchedule.Remarks"></textarea>
+                                @*<span data-bind="text:$root.CurrentSchedule.Remarks"></span>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7 top20">
+                        <div class="col-md-12">
+                            <label class="col-md-2 label reg-label">Patient Type</label>
+                            <div class="col-md-12" style="top: -10px;">
+                                <div class="radio">
+                                    <label class="col-md-offset-2 col-md-3 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:1,checked: $root.CurrentSchedule.PatientType">In-Patient</label>
+                                    <label class="col-md-3 withhover">
+                                        <input type="radio" name="optradio" data-bind="value:2,checked: $root.CurrentSchedule.PatientType">Out-Patient</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="top5 col-md-3 label reg-label">PIN</label>
+
+                            <div class="col-md-9">
+                                <!-- ko if: $root.CurrentSchedule.PatientType() == 1 -->
+                                <select id="IPPins" class="form-control select2" style="margin-left: 2px;"
+                                    data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'IACRegno', value:$root.SelectedIPOPID, 
+                                                   select2:{placeholder: 'Select a Pin', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.CurrentSchedule.PatientType() == 2 -->
+                                <div class="input-group col-md-12">
+                                    <input id="OpPinTxt" class="form-control" style="margin-left: 2px;"
+                                        data-bind="textInput:$root.OPPin,executeOnEnter:$root.GetPatient" />
+                                    <span class="input-group-btn ">
+                                        <button class="btn btn-primary btn-xs glyphicon glyphicon-search" type="submit" style="border-radius: 0px !important;"
+                                            data-bind="click:$root.SearchPatient">
+                                        </button>
+                                    </span>
+                                </div>
+                                <!-- /ko -->
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top5 col-md-2 label reg-label" style="margin-left: -15px;">Bed</label>
+
+                            <div class="col-md-10" style="margin-left: 15px;">
+                                <select id="Beds" class="form-control select2"
+                                    data-bind="attr: { disabled: $root.CurrentSchedule.PatientType() == 2},
+                                                 options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.SelectedIPOPID, 
+                                                 select2:{placeholder: 'Select Bed', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="top5 col-md-3 label reg-label">Name</label>
+
+                            <div class="col-md-9">
+                                <!-- ko if: $root.CurrentSchedule.PatientType() == 1 -->
+                                <select id="SelectPatientNames" class="form-control select2" style="margin-left: 2px;"
+                                    data-bind="
+                                             options:$root.Patients, optionsValue:'IPOPID',optionsText:'PatientName', value:$root.SelectedIPOPID, 
+                                             select2:{placeholder: 'Select Patient Name', allowClear: true}">
+                                </select>
+                                <!-- /ko -->
+                                <!-- ko if: $root.CurrentSchedule.PatientType() == 2 -->
+                                <input id="PatientNameTxt" class="form-control select2" style="margin-left: 2px;" readonly
+                                    data-bind="value:$root.CurrentSchedule.PatientName" />
+                                <!-- /ko -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top5 col-md-2 label reg-label" style="margin-left: -15px;">Age</label>
+
+                            <div class="col-md-10" style="margin-left: 15px;">
+                                <input id="Age" class="form-control" readonly
+                                    data-bind="value:$root.AgeStr" />
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="top5 col-md-3 label reg-label">Ward</label>
+
+                            <div class="col-md-9">
+                                <input id="Ward" class="form-control" style="margin-left: 2px;" readonly
+                                    data-bind="value:$root.WardName" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="top5 col-md-2 label reg-label" style="margin-left: -15px;">Sex</label>
+
+                            <div class="col-md-10" style="margin-left: 15px;">
+                                <input id="Sex" class="form-control" readonly
+                                    data-bind="value:$root.SexStr" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">Category</label>
+
+                            <div class="col-md-10">
+                                <input id="Category" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-2 label reg-label">Company</label>
+
+                            <div class="col-md-10">
+                                <input id="Company" class="form-control" readonly />
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-12 top20" style="margin-bottom: 20px;">
+                        <div class="col-md-12 top20">
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Procedure</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Other Therapist</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Technician</label>
+                            <label class="col-md-offset-1 col-md-2 label reg-label">Nurse</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-3 ">
+                                <select id="Procedures"
+                                    class="col-md-12 select2" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Procedures,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.CurrentSchedule.Procedures
+                                                ,select2:{placeholder: 'Select Procedures', allowClear: true}">
+                                </select>
+                                @* <span data-bind="text:$root.CurrentSchedule.Procedures"></span>*@
+                            </div>
+
+                            <div class="col-md-3 ">
+                                <select id="OTherapist"
+                                    class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Therapist,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.CurrentSchedule.OtherTherapist,
+                                                 select2:{placeholder: 'Select Therapist', allowClear: true}">
+                                </select>
+                                @*<span data-bind="text:$root.CurrentSchedule.OtherTherapist"></span>*@
+                            </div>
+                            <div class="col-md-3 ">
+                                <select id="Technicians"
+                                    class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Technicians,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.CurrentSchedule.Technicians,
+                                                     select2:{placeholder: 'Select Technicians', allowClear: true}">
+                                </select>
+                                @*span data-bind="text:$root.CurrentSchedule.Technicians"></span>*@
+                            </div>
+                            <div class="col-md-3 ">
+
+                                <select id="Nurses" class="col-md-12 select2 multi" multiple="multiple" style="padding: 0px !important;"
+                                    data-bind="options:$root.Nurses,optionsText:'Text', optionsValue:'Id',selectedOptions:$root.CurrentSchedule.Nurses,
+                                                     select2:{placeholder: 'Select Nurses', allowClear: true}">
+                                </select>
+                                @*  <span data-bind="text:ko.toJSON($root.CurrentSchedule.Nurses)"></span>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="SearchPatient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 80%; z-index: 1200;">
+        <div class="modal-content" ">
+            <div class="modal-header">
+
+                <header>Search Patient</header>
+                <button id="SClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style=" margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">First Name</label>
+                            <div class="col-md-9">
+                                <input id="SFirstName" class="form-control" data-bind="value:$root.SearchParam.firstName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Middle Name</label>
+
+                            <div class="col-md-9">
+                                <input id="SMiddleName" class="form-control" data-bind="value:$root.SearchParam.middleName"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Last Name</label>
+                            <div class="col-md-9">
+                                <input id="SLastName" class="form-control"  data-bind="value:$root.SearchParam.lastName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Family Name</label>
+                            <div class="col-md-9">
+                                <input id="SFamilyName" class="form-control" data-bind="value:$root.SearchParam.familyName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                         <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Father Name</label>
+                            <div class="col-md-9">
+                                <input id="SfatherName" class="form-control" data-bind="value:$root.SearchParam.fatherName" />
+                            </div>
+                        </div>
+                          <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Age</label>
+                            <div class="col-md-4">
+                                <input id="SAge" class="form-control" 
+                                          data-bind="value:$root.SearchParam.age" />
+                            </div>
+                              <div class="col-md-5">
+                                <select id="SAgeType" class="form-control" 
+                                        data-bind="options:$root.AgeTypes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.ageType, 
+                                                   select2: {placeholder: 'Select Option', allowClear: true}" ></select>
+                            </div>
+                        </div>
+                          <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Sex</label>
+                            <div class="col-md-9">
+                                <select id="SSex" class="form-control"
+                                    data-bind="options:$root.Sexes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.sex 
+                                    ,select2: {placeholder: 'Select Gender', allowClear: true}" ></select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                         
+                                 <label class="top5 col-md-3 label reg-label">Reg. Date</label>
+                                 
+                        
+                            
+                            <div class="col-md-4">
+                                <input id="SFrom" class="form-control" style="font-size:10px !important;font-weight:600;"
+                                     data-bind="enable:$root.hasDate() ==true,datepicker:$root.SearchParam.fromDate,
+                                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}"/>
+                            </div>
+                            <label class="top5 col-md-1 label reg-label" >To</label>
+                              <div class="col-md-4">
+                                <input id="STo" class="form-control" style="font-size:10px !important;font-weight:600;"
+                                     data-bind="enable:$root.hasDate() ==true, datepicker:$root.SearchParam.toDate,
+                                                datepickerOptions:{format: 'dd-M-yyyy',autoclose: true, todayHighlight:true,todayBtn:true}"/>
+                            </div>
+
+                           
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                            <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Place</label>
+                            <div class="col-md-9">
+                                <select id="SCity" class="form-control" 
+                                    data-bind="options:$root.Cities, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.city,
+                                                select2:{placeholder: 'Select City', allowClear: true}"></select>
+                            </div>
+                        </div>
+                          <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Country</label>
+                            <div class="col-md-9">
+                                <select id="SCountry" class="form-control" 
+                                        data-bind="options:$root.Countries, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.country
+                                                   ,select2: {placeholder: 'Select Country', allowClear: true}"></select>
+                            </div>
+                            
+
+                        </div>
+                         <div class="col-md-12 top20">
+                           <input type="checkbox" data-bind="value:true, checked:$root.hasDate"style="margin-left:-70px;margin-top:10px;"/>
+                          <button id="SSearch" class="btn btn-primary" data-bind="click:$root.GetPatients" style="margin-left:60px;margin-top:-10px;">
+                                <span class="glyphicon glyphicon-search"></span> Go
+                            </button>
+                            <button id="SClear" class="btn btn-default" data-bind="click:$root.ClearSearchFilters" style="margin-left:20px;margin-top:-10px;">
+                                <span class="glyphicon glyphicon-erase"></span> Clear
+                            </button>
+                             </div>
+                    </div>
+
+                    <div class="col-md-12 top20" >
+                      
+                        <div class="col-md-12" style="background-color: #dcdfe0!important;">
+                            <br />
+                            <table id="PatientTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No. </th>
+                                        <th>PIN</th>
+                                        <th>Patient Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Place</th>
+                                        <th>Country</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SearchedPatient,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.SelectPatient">
+                                        <td data-bind="text:SlNo"></td>
+                                        <td data-bind="text:IACRegno"></td>
+                                        <td data-bind="text:PatientName"></td>
+                                        <td data-bind="text:AgeStr"></td>
+                                        <td data-bind="text:Sex"></td>
+                                        <td data-bind="text:Phone"></td>
+                                        <td data-bind="text:CityName"></td>
+                                        <td data-bind="text:CountryName"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<div id="RequestedSchedule" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200;">
+        <div class="modal-content" ">
+            <div class="modal-header">
+
+                <header>Requested Schedule</header>
+                <button id="RClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style=" margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                 <div class="col-md-12">
+                <table class="table" id="PTRequestSchedules">
+                <thead>
+                    <tr>
+                        <th>From Time </th>
+                        <th>To Time</th>
+                        <th>Pin No</th>
+                        <th>Patient Name</th>
+                        <th>Age</th>
+                        <th>Room No</th>
+                        <th>Ward Name</th>
+                        <th>Procedures</th>
+                        <th>Doctor</th>
+                    </tr>
+
+                </thead>
+                <tbody data-bind="dataTablesForEach:{data:$root.RequestSchedule, dataTableOptions:{destroy: true,
+                                                                                          columns:[  {width: '100px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                    ,{width: '100px'}
+                                                                                                    ,{width: '150px'}
+                                                                                                    ,{width: '30px'}
+                                                                                                    ,{width: '80px'}
+                                                                                                    ,{width: '150px'}
+                                                                                                    ,{width:'150px'}
+                                                                                                    ,{width:'150px'}] 
+                
+                    }}" style="overflow: auto; height: 200px;">
+                    <tr data-bind="click: $root.SelectRequestedSchedule">
+                        <td data-bind="text:moment(FromdateTime).format('hh:mm A')"></td>
+                        <td data-bind="text:moment(Todatetime).format('hh:mm A')"></td>
+                        <td data-bind="text:PIN"></td>
+                        <td data-bind="text:PatientName">
+                        </td>
+                        <td data-bind="text:Age"></td>
+                        <td data-bind="text:RoomNo"></td>
+                        <td data-bind="text:WardName"></td>
+                        <td data-bind="text:Procedures"></td>
+                        <td data-bind="text:DoctorName"></td>
+                    </tr>
+                </tbody>
+               <tfoot>
+              </table>
+                 </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<input id="urlAcions" class="hidden" 
+    data-getptschedules ="@Url.Action("Index")"
+    data-getinpatients ="@Url.Action("GetInpatients")"
+    data-getinpatientdetails ="@Url.Action("GetInpatientDetails")"
+    data-getpatient ="@Url.Action("GetPatient")"
+    data-searchpatient ="@Url.Action("SearchPatient")"
+    data-getptsdoctor ="@Url.Action("getPTSDoctor")"
+    data-getptstechnician ="@Url.Action("getPTSTechnician")"
+    data-getptsphysiotherapist ="@Url.Action("getPTSPhysiotherapist")"
+    data-getptsnurse ="@Url.Action("getPTSNurse")"
+    data-getptsprocedure ="@Url.Action("getPTSProcedure")"
+    data-getptschedule="@Url.Action("getPTSchedule")"
+    data-getemployee="@Url.Action("getEmployee")"
+    data-saveptschedule="@Url.Action("Save")"
+    data-updateptschedule="@Url.Action("Update")"
+    data-cancelptschedule="@Url.Action("Cancel")"
+    data-getptschedulerequest="@Url.Action("getPTScheduleRequest")"
+    data-searchpatientpin="@Url.Action("searchPatientPin")"
+    data-searchschedule="@Url.Action("searchSchedule")"
+    
+    
+/>
+
+@section Scripts{
+    <script type="text/javascript" src="~/Content/plugins/datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/File/Schedules.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+
+            var viewModel = new Schedules(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+
+@section Styles{
+    <style>
+        div.ui-timepicker-wrapper {
+            width: 8em !important;
+        }
+    </style>
+}

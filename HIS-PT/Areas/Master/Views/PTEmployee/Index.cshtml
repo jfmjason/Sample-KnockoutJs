@@ -1,0 +1,189 @@
+﻿@model HIS_PT.Areas.Master.ViewModels.PTEmployeeViewModel
+
+@{
+  
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase">Physiotherapy Employee Maintenance</header>
+    </div>
+    <div class="row top5 default-color">
+
+        <div class="col-md-12 top10">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs nav-justified top5">
+                    <li class="col-md-4 active" style="padding: 5px;" data-bind="click:$root.ClearSearch">
+                        <a data-toggle="tab" href="#tab-technicians" style="border-bottom: 0px;">
+                            <strong>TECHNICIANS</strong>
+                        </a>
+                    </li>
+                    <li class="col-md-4" style="padding: 5px;"  data-bind="click:$root.ClearSearch">
+                        <a data-toggle="tab" href="#tab-therapist" style="border-bottom: 0px;">
+                            <strong>PHYSIOTHERAPIST</strong>
+                        </a>
+                    </li>
+                    <li class="col-md-4" style="padding: 5px;"  data-bind="click:$root.ClearSearch">
+                        <a data-toggle="tab" href="#tab-nurses" style="border-bottom: 0px;">
+                            <strong>NURSES</strong>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+            <div class="tab-content col-md-12 background-gray" style="margin-bottom: 10px;">
+                <div id="tab-technicians" class="col-md-12 tab-pane fade in active">
+                    <div class="col-md-12 top15">
+                        <label class="top5 col-md-1 label reg-label">Technician</label>
+                        <div class="col-md-4">
+                            <input class="form-control" data-bind="value:$root.SelectedEmployee,
+                                     select2: {minimumInputLength: 2, query:$root.SearchEmployee, placeholder:'Search Employee', allowClear: true}" />
+                        </div>
+                         <button id="New" class=" btn btn-primary btn-xs" data-bind="click:$root.AddTechnician, enable:$root.SelectedEmployee()!=''">
+                            <span class="glyphicon glyphicon-plus"></span> Add 
+                        </button>
+                    </div>
+
+                   <div class="col-md-12 default-color top10" style="margin-bottom:10px;">
+                        <br />
+                            <table id="PatientTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Id </th>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.Technicians,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr  >
+                                        <td data-bind="text:EmployeeId"></td>
+                                        <td data-bind="text:Empcode"></td>
+                                        <td data-bind="text:Name"></td>
+                                        <td> <a data-bind="click:$root.RemoveTechnicians"><span class="glyphicon glyphicon-remove"></span> REMOVE</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                   </div>
+                </div>
+              
+                <div id="tab-nurses" class="col-md-12 tab-pane fade">
+                    <div class="col-md-12 top15">
+                        <label class="top5 col-md-1 label reg-label">Nurse</label>
+                        <div class="col-md-4">
+                            <input class="form-control" data-bind="value:$root.SelectedEmployee,
+                                     select2: {minimumInputLength: 2, query:$root.SearchEmployee, placeholder:'Search Employee', allowClear: true}" />
+                        </div>
+                         <button  class=" btn btn-primary btn-xs" data-bind="click:$root.AddNurses, enable:$root.SelectedEmployee()!=''">
+                            <span class="glyphicon glyphicon-plus"></span> Add 
+                        </button>
+                    </div>
+
+                   <div class="col-md-12 default-color top10" style="margin-bottom:10px;">
+                        <br />
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Id </th>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.Nurses,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr >
+                                        <td data-bind="text:EmployeeId"></td>
+                                        <td data-bind="text:Empcode"></td>
+                                        <td data-bind="text:Name"></td>
+                                        <td> <a data-bind="click:$root.RemoveNurses"><span class="glyphicon glyphicon-remove"></span> REMOVE</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                   </div>
+
+
+                </div>
+
+                  <div id="tab-therapist" class="col-md-12 tab-pane fade">
+                    <div class="col-md-12 top15">
+                        <label class="top5 col-md-1 label reg-label">Physiotherapist</label>
+                        <div class="col-md-4">
+                            <input class="form-control" data-bind="value:$root.SelectedEmployee,
+                                     select2: {minimumInputLength: 2, query:$root.SearchEmployee, placeholder:'Search Employee', allowClear: true}" />
+                        </div>
+                         <button  class=" btn btn-primary btn-xs" data-bind="click:$root.AddPhysiotherapist, enable:$root.SelectedEmployee()!=''">
+                            <span class="glyphicon glyphicon-plus"></span> Add 
+                        </button>
+                    </div>
+
+                   <div class="col-md-12 default-color top10" style="margin-bottom:10px;">
+                        <br />
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Id </th>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.Therapist,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr  >
+                                        <td data-bind="text:EmployeeId"></td>
+                                        <td data-bind="text:Empcode"></td>
+                                        <td data-bind="text:Name"></td>
+                                        <td> <a data-bind="click:$root.RemoveTherapist"><span class="glyphicon glyphicon-remove"></span> REMOVE</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                   </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<input id="urlAcions" class="hidden" 
+    data-searchemployee ="@Url.Action("SearchEmployee")"
+    data-add ="@Url.Action("Add")"
+    data-remove ="@Url.Action("Remove")"
+    data-getptemployee="@Url.Action("GetPTEmployee")"
+/>
+
+@section Scripts{
+
+    <script type="text/javascript" src="~/Scripts/Master/PTEmployee.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            var viewModel = new Employees(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+
+@section Styles{
+    <style>
+        div.ui-timepicker-wrapper {
+            width: 8em !important;
+        }
+    </style>
+}

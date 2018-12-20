@@ -1,0 +1,62 @@
+﻿@using HIS_XRYRECPT.Models;
+@using HIS_XRYRECPT.Enumerations;
+
+
+@if (TempData["ResponseNotification"] != null)
+{
+    var response = (ResponseMessage)TempData["ResponseNotification"];
+
+    var iconclass = "";
+    var alertcss = "";
+
+    if (response.ResponseType == ResponseType.Success)
+    {
+        iconclass = " glyphicon glyphicon-saved";
+        alertcss = "alert alert-success";
+    }
+    else if (response.ResponseType == ResponseType.Warning)
+    {
+        iconclass = "glyphicon glyphicon-warning-sign";
+        alertcss = "alert alert-danger";
+    }
+    else
+    {
+        iconclass = "glyphicon glyphicon-alert";
+        alertcss = "alert alert-danger";
+    }
+    
+    <div id="modal-saveresponse" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="width: 30%;">
+            <button type="button" class="close btn-default" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Xray Reception</div>
+                <div class="panel-body @alertcss" style="margin-bottom:0px;">
+                    <br />
+                    <div class="col-xs-1"></div>
+
+                    <div class="col-xs-2">
+                        <span class="@iconclass" style="font-size: 3.2em;"></span>
+
+                    </div>
+                    <div class="col-xs-8" style="font-size: 14px;">
+
+                        <strong>@response.ResponseType!</strong> @response.Message
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                  <div class="row">
+                        <div class="col-xs-3 col-xs-offset-5">
+                            <button type="submit" class="btn btn-primary btn-default col-xs-8" data-dismiss="modal"><span class="glyphicon glyphicon-ok"></span>Ok</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+   
+}

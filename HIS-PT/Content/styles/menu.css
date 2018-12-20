@@ -1,0 +1,291 @@
+﻿/*.AR_Menu_Container {
+    position:fixed;
+    left:0;
+    top:0;
+    height:100%;
+    width:60px;
+    border-right:1px solid #eee;
+}*/
+
+/* OVERRIDE */
+.navbar-nav > li > a { padding-top:5px !important; padding-bottom:5px !important; }
+.navbar { min-height:54px !important; }
+.navbar-fixed-top {
+    height: 54px; /* Whatever you want. */
+    z-index:1049;
+}
+.dropdown-menu{
+    margin-top:0px !important;
+}
+.navbar-header a{
+    padding-top:5px !important;
+}
+
+a.navbar-brand{
+    height:30px !important;
+    color:#F2784B !important;
+    border-right:1px solid #ddd;
+}
+
+.navbar-header{
+    text-align:center !important;
+}
+.ar-module-title {
+    margin-left:20px;
+    font-size:14px !important;
+    color:#fff; 
+}
+.navbar a, .nav a{
+    text-decoration: none !important;
+    font-size: 12px;
+}
+
+.cAR-margin-top{
+    margin-top:56px;
+}
+/*[ OVERRIDE ]*/
+
+li.dropdown-submenu{
+    /*min-width:250px !important;*/
+}
+li.dropdown-submenu:hover ul{
+    display: block;
+    left: 100%;
+}
+
+li.dropdown-submenu ul.dropdown-menu li ul{
+    display:none;
+}
+
+li.dropdown-submenu ul.dropdown-menu li:hover ul{
+    display: block;
+}
+
+.dropdown-submenu{
+    position:relative;
+}
+
+.dropdown-submenu:hover .dropdown-menu{
+    top:0;
+}
+.caret-right{
+      position:absolute;
+      right:10px;
+      width: 0;
+      height: 0;
+      margin-left: 2px;
+      vertical-align: middle;
+      margin-top:5px;
+      border-left: 4px solid;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-right: 4px solid transparent;
+}
+.yamm li {
+    list-style:none;
+}
+
+/*Yamm Override*/
+.cAR-menu-col
+{
+    height:100%;
+    float:left;
+    margin-right:0px;
+}
+.cAR-menu-col li a
+{
+    color:#444;
+}
+.cAR-menu-col li a:hover, .navbar li a:hover
+{
+    color:#0094ff;
+}
+.yamm-pad-fix
+{
+    padding:0px !important;
+    padding-right:35px !important;
+}
+
+/* APPS */
+div.application-title {
+    height: 24px;
+    background-color: #2980B9; /* 3277bc | 1BA39C | #2980B9*/
+    
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left: 15px;
+    line-height: 24px;
+    color: #fff;
+}
+
+div.application-title .cAR-title
+{
+    color: #fff;
+    font-family: Calibri;
+    font-size: 16px;
+    letter-spacing:0.05em;
+}
+.cAR-uname
+{
+    height: 24px;
+    line-height: 24px;
+    font-size:12px;
+    color:#fff;
+    margin-right:20px;
+}
+.clear-both
+{
+    clear:both;
+}
+
+.ar-modtitle-sep {
+    color: rgba(255,255,255, 1);
+    margin-top:6px;
+    position:absolute;
+    font-size:12px;
+    margin-left:3px;
+}
+
+/* AR MINI top MENU*/
+.ar_mini_top_menu {
+    height:24px !important;
+    margin-right:0px;
+    line-height:24px !important;
+    background-color:#34495e !important;
+    /*background-color:#34495e !important;*/
+}
+    .ar_mini_top_menu ul li, .ar_mini_top_menu ul li .dropdown  {
+        height:24px !important;
+        line-height:24px !important;
+        
+    }
+        .ar_mini_top_menu li a {
+            height:26px !important;
+            font-size:14px !important;
+            margin-top:-2px;
+            color:#ffffff !important;
+        }
+
+    .ar_mini_top_menu > .open > a {
+        color:#666666 !important;
+    }
+
+    .ar_mini_top_menu .dropdown-menu {
+        margin-top:0px !important;
+        position:absolute;
+        border-top:none !important;
+    }
+        .ar_mini_top_menu .dropdown-menu > li > a {
+            color:#333 !important;
+            margin-top:1px;
+            font-size:12px !important;
+        }
+
+.AR_user_cont {
+    background-color:#ccc;
+    padding-right:40px;
+    height:24px;
+    position:fixed;
+    top:0;
+    right:0;
+}
+
+.AR_user_cont user{
+    font-family: Consolas, 'Lucida Console', 'DejaVu Sans Mono', monospace;
+    font-size:13px !important;
+    margin-left:5px;
+    color:#111;
+}
+
+.AR_custom_status_bar {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    z-index:999999;
+    background-color: #333;
+    height: 20px;
+    line-height: 20px;
+    color: #888;
+    font-size: 10px;
+    text-align:right;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: Consolas, 'Lucida Console', 'DejaVu Sans Mono', monospace;
+    padding-left:5px;
+    padding-right:0px;
+}
+.AR_form_control{
+    width:100%;
+    height:34px;
+    border:1px solid #ddd;
+    font-size:12px !important;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    -ms-border-radius:5px;
+    border-radius:5px;
+}
+
+.AR_apps_about {
+    width:auto;
+    padding:10px;
+    position:fixed;
+    z-index:999999;
+    display:none;
+    right:0;
+    bottom:19px;
+    background-color:#222;
+    color: #666;
+    font-size:12px;
+    font-family: Consolas, 'Lucida Console', 'DejaVu Sans Mono', monospace;
+}
+    .AR_apps_about span {
+        font-size:10px;
+        color:#999;
+    }
+    .AR_apps_about hr {
+        border-color:#333
+    }
+
+.AR_apps_about_btn {
+    width:20px;
+    height:20px;
+    color:#fff;
+    text-align:center;
+    line-height:20px;
+    background-color:#222;
+    float:right;
+}
+.AR_apps_about_btn:hover {
+    background-color:#1BA39C;
+    color:#fff;
+    cursor:pointer;
+}
+.AR_live_dbs {
+    font-size:10px !important;
+    font-weight:bold !important;
+    color:#5ce22e !important;
+}
+.AR_test_dbs {
+    font-size:10px !important;
+    font-weight:bold !important;
+    color:#F2784B !important;
+}
+.AR_my_IP_add {
+    font-size:10px !important;
+    font-weight:normal !important;
+    color:#fff !important;
+}
+.AR_dept_color{
+    color:#fff !important;
+}
+.AR_total_amt {
+    color:#1BA39C !important;
+    font-size:14px !important;
+    font-weight:bold;
+    background-color:#eee !important;
+}
+.AR_about_title{
+    color:#ddd;
+}

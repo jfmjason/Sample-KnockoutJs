@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HIS-PT", "HIS-PT\HIS-PT.csproj", "{D0960918-CF6E-4CB5-BEC4-0302226EDE1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0960918-CF6E-4CB5-BEC4-0302226EDE1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0960918-CF6E-4CB5-BEC4-0302226EDE1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0960918-CF6E-4CB5-BEC4-0302226EDE1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0960918-CF6E-4CB5-BEC4-0302226EDE1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD02C6C-AE1F-4F0D-B33C-5A3F25C87A6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

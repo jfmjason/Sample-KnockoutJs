@@ -1,0 +1,692 @@
+﻿@model HIS_PT.Areas.File.ViewModels.PTDischargeDisplayViewModel
+
+<div class="container" style="width: 96%;">
+    <div class="row top5 default-color " style="padding: 10px;">
+        <header class="header-uppercase col-md-5">Physiotherapy discharge summary</header>
+
+
+         <button id="Clear" class="btn-primary pull-right   btn btn-sm"  style="margin-left:10px;" data-bind="click:$root.ResetFields">
+            <span class="glyphicon glyphicon-erase"></span> Clear
+        </button>
+
+        <button id="Print" class="btn-primary pull-right  btn btn-sm" style="margin-left:10px;" data-bind="visible:$root.PTDischarge.Id() > 0 , click:$root.Print">
+            <span class="glyphicon glyphicon-print"></span> Print
+        </button>
+
+        <button id="Save" class="btn-primary pull-right  btn btn-sm"
+            data-bind="visible:$root.PTDischarge.Id()==0,click:$root.Save">
+            <span class="glyphicon glyphicon-check"></span> Save
+        </button>
+
+        <button id="Update" class="btn-primary pull-right   btn btn-sm"
+            data-bind="visible:$root.PTDischarge.Id() > 0,click:$root.Update">
+            <span class="glyphicon glyphicon-saved"></span> Update
+        </button>
+
+    
+
+      
+    </div>
+    <div class="row top5 default-color">
+        <div class="row top10">
+            <div class="col-md-12 top10">
+                <div class="col-md-2">
+                    <label class="top5 col-md-12 label reg-label">Patient Type</label>
+                    <div class="col-md-12">
+                        <div class="radio top10">
+                            <label class="col-md-6 withhover">
+                                <input type="radio" name="optradio" data-bind="value :1, checked: $root.PTDischarge.PatientType">IP</label>
+                            <label class="col-md-6 withhover">
+                                <input type="radio" name="optradio" data-bind="value:0, checked: $root.PTDischarge.PatientType  ">OP</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 top10">
+                         <button class="btn btn-xs btn-primary" data-bind="click:function(){return $root.LatestIcdDisplay(true)},visible:$root.LatestIcdDisplay() == false">
+                           <i class="glyphicon glyphicon-plus"></i> Show ICD Details
+                         </button>
+
+                        <button class="btn btn-xs btn-primary" data-bind="click:function(){return $root.LatestIcdDisplay(false)}, visible:$root.LatestIcdDisplay() == true">
+                           <i class="glyphicon glyphicon-minus"></i> Hide ICD Details
+                         </button>
+                    </div>
+
+                    <div class="col-md-12">
+                          <!-- ko if: $root.AllPTDischarge().length > 2 -->
+                        <label class="top10 col-md-12 label reg-label">Discharge Dates</label>
+                        <select  class="form-control select2"
+                            data-bind="options:$root.AllPTDischarge, optionsValue:'Id',optionsText:  function (item) { return $.trim(item.DateOfDischarge) == ''?'': moment(item.DateOfDischarge).format('DD-MMM-YYYY hh:mm A') }, value:$root.PTDischarge.Id, 
+                                                   select2:{placeholder: 'Select Date', allowClear: true}">
+                        </select>
+                        <!-- /ko -->
+
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <label class="top5 col-md-3 label reg-label">PIN</label>
+                    <div class="col-md-9">
+                        <!-- ko if: $root.PTDischarge.PatientType() == 1 -->
+                        <select id="IPPins" class="form-control select2"
+                            data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'IACRegno', value:$root.PTDischarge.IPIDOPID, 
+                                                   select2:{placeholder: 'Select a Pin', allowClear: true}">
+                        </select>
+                        <!-- /ko -->
+                        <!-- ko if:$root.PTDischarge.PatientType() == 0 -->
+                        <div class="input-group col-md-12">
+                            <input id="OpPinTxt" class="form-control"
+                                data-bind="textInput:$root.PTDischarge.PIN,executeOnEnter:$root.GetPatient" />
+                            <span class="input-group-btn ">
+                                <button class="btn btn-primary btn-xs glyphicon glyphicon-search" type="submit" style="border-radius: 0px !important; margin-top: -2px;"
+                                    data-bind="click:$root.SearchPatient">
+                                </button>
+                            </span>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                    <div class="col-md-12"></div>
+                    <label class="top10 col-md-3 label reg-label">Bed</label>
+                    <div class="col-md-9 top5">
+                        <select id="SelectedBed" class="form-control select2"
+                            data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.PTDischarge.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Bed', allowClear: true},
+                                                                     attr:{disabled:$root.PTDischarge.PatientType() == 0}">
+                        </select>
+                    </div>
+
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Primary Consultant</label> 
+                    <div class="col-md-9">
+                        <input id="CategoryStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.ConsultantName" />
+                    </div>
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Therapist Name</label>
+                    <div class="col-md-9">
+                        <select class="form-control select2"
+                            data-bind="options:$root.Therapist, optionsValue:'Id',optionsText:'Text', value:$root.PTDischarge.TherapistId, 
+                                                                     select2:{placeholder: 'Select Therapist', allowClear: true}">
+                        </select>
+                    </div>
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Admit Date</label>
+                    <div class="col-md-9">
+                        <input id="AdmitDate" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.DateOfAdmission" />
+                    </div>
+                </div>
+                <div class="col-md-5" data-bind="visible:$root.LatestIcdDisplay() == false">
+                    <label class="col-md-3 label reg-label">Name</label>
+                    <div class="col-md-9">
+                        <!-- ko if: $root.PTDischarge.PatientType() == 1 -->
+                        <select id="SelectPatientNames" class="form-control select2"
+                            data-bind="
+                                                                     options:$root.Patients, optionsValue:'IPOPID',optionsText:'PatientName', value:$root.PTDischarge.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Patient Name', allowClear: true}">
+                        </select>
+                        <!-- /ko -->
+                        <!-- ko if: $root.PTDischarge.PatientType() == 0 -->
+                        <input id="PatientNameTxt" class="form-control select2" readonly
+                            data-bind="value:$root.PTDischarge.PatientName" />
+                        <!-- /ko -->
+                    </div>
+
+
+                    <div class="col-md-12"></div>
+                    <label class="top10 col-md-3 label reg-label">Age</label>
+                    <div class="col-md-4 top5">
+                        <input id="AgeStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.AgeStr" />
+                    </div>
+                    <label class="top10 col-md-1 label reg-label">Sex</label>
+                    <div class="col-md-4 top5">
+                        <input id="SexStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.SexStr" />
+                    </div>
+                    <div class="col-md-12"></div>
+
+                    <label class="top5 col-md-3 label reg-label">Ward</label>
+                    <div class="col-md-9">
+                        <input id="WardStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.WardStr" />
+                    </div>
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Reffered By</label>
+                    <div class="col-md-9">
+                        <input id="CompanyCode" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.RefferedBy" />
+                    </div>
+
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Discharge Date</label>
+                    <div class="col-md-5">
+                         <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-calendar" style="z-index: 2;"></i>
+                        <input id="DischargedDate" class="form-control"
+                            data-bind="datetimepicker:$root.PTDischarge.DateOfDischarge,datepickerOptions:{format:'DD-MMM-YYYY hh:mm A'}" />
+                    </div>
+                      </div>
+
+
+                </div>
+
+                <div class="col-md-5" data-bind="visible:$root.LatestIcdDisplay() == true">
+                    <div class="col-md-12 background-darkerblue" style="height:145px;">
+                      <table class="table background-orange top5" style="width:100% !important; padding:10px;" >
+                         <thead>
+                            <tr>
+                               <th style="width:100%;"> CODE </th>
+                               <th style="width:100%;"> DESCRIPTION </th>
+                            </tr>
+                         </thead>
+                         <tbody data-bind="dataTablesForEach:{data:$root.LatestIcdDescription,dataTableOptions:{paging:false,destroy: true,searching:false,info:false, scrollY:'140'}}" style="overflow: auto; height: 200px;">
+                            <tr>
+                                <td data-bind="text:ICDCode"></td>
+                                <td data-bind="text:ICDDescription"></td>
+                            </tr>
+                         </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 ">
+                <div class="col-md-12 default-color">
+                    <div class=" col-md-12 background-darkerblue" style="margin-bottom: 20px;">
+                        <div class="col-md-3 top5" style="padding: 15px; margin-bottom: 5px; background-color: #7aabc3!important">
+                            <ul class="nav navbar-nav navbar-left col-md-12">
+                                <li class="col-md-12 active" style="padding: 5px;">
+                                    <a data-toggle="tab" href="#tab-address" class="btn btn-lg btn-default tab-btn btn-discharge ">
+                                        <strong>Address</strong>
+                                    </a>
+                                </li>
+                                <li class="col-md-12" style="padding: 5px;">
+                                    <a data-toggle="tab" href="#tab-presently" class="btn btn-lg btn-default tab-btn btn-discharge "><strong>Presently & Bladder /  Bowel</strong></a>
+                                </li>
+                                <li class="col-md-12" style="padding: 5px;">
+                                    <a data-toggle="tab" href="#tab-physical" class="btn btn-lg btn-default tab-btn btn-discharge"><strong>Physical Examination</strong></a>
+                                </li>
+                                <li class="col-md-12" style="padding: 5px;">
+                                    <a data-toggle="tab" href="#tab-pressure" class="btn btn-lg btn-default tab-btn btn-discharge " style="padding-top: 2px !important;"><strong>PressureSore , Functional Abilities & Advice on Discharge</strong></a>
+                                </li>
+                                <li class="col-md-12" style="padding: 5px;">
+                                    <a data-toggle="tab" href="#tab-procedure" class="btn btn-lg btn-default tab-btn btn-discharge "><strong>Procedures</strong> </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-9 "  data-bind="style:{height:$root.TabContentHeight, overflow:'auto'}">
+                            <div class="col-md-12 tab-content top5 background-navyblue">
+                                <div id="tab-address" class="col-md-12 tab-pane fade withborder in active ">
+                                    <div class="col-md-12 default-color top20" style="height:300px;margin-bottom:17px;">
+                                    <div class="col-md-12 top20"></div>
+                                    <label class="top5 col-md-2 label reg-label">Address</label>
+                                    <div class="col-md-9">
+                                        <textarea  data-bind="value:$root.PTDischarge.Address" class="col-md-12" readonly rows="6" style="background-color:#fcf8e3 !important;resize:none;" ></textarea>
+
+                                    </div>
+                                    <div class="col-md-12 top20"></div>
+                                    <label class="top5 col-md-2 label reg-label">City</label>
+                                    <div class="col-md-9">
+                                        <input data-bind="value:$root.PTDischarge.CityName" class="form-control" readonly  style="background-color:#fcf8e3 !important;" />
+                                    </div>
+                                    <div class="col-md-12 top20"></div>
+
+                                    <label class="top5 col-md-2 label reg-label">Country</label>
+                                    <div class="col-md-9">
+                                        <input data-bind="value:$root.PTDischarge.CountryName" class="form-control" readonly  style="background-color:#fcf8e3 !important;" />
+                                    </div>
+                                    <div class="col-md-12 top20"></div>
+                                    <label class="top5 col-md-2 label reg-label">Zip Code</label>
+                                    <div class="col-md-9">
+                                        <input data-bind="value:$root.PTDischarge.ZipCode" class="form-control" readonly style="background-color:#fcf8e3 !important;"  />
+                                    </div>
+                                    </div>
+                                </div>
+                                <div id="tab-presently" class="col-md-12 tab-pane fade">
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-tabs nav-justified top5">
+                                            <li class="active"><a data-toggle="tab" href="#tab-presently2">PRESENTLY</a></li>
+                                            <li><a data-toggle="tab" href="#tab-bowel2">BLADDER /  BOWEL</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tab-content col-md-12" style="margin-bottom: 10px;">
+                                        <div id="tab-presently2" class="col-md-12 tab-pane fade in active withborder">
+                                           <div class="col-md-4">
+                                               <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.Presently,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedPresentlyTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                             </div>
+                                            </div>
+                                           <div class="col-md-8 top15" id="presentlycontent"></div>
+                                        </div>
+                                        <div id="tab-bowel2" class="col-md-12 tab-pane fade withborder">
+                                             <div class="col-md-4">
+                                                 <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.BladderBowel,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedBladderBowelTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                     </div>
+                                            </div>
+                                           <div class="col-md-8 top15" id="bladderbowelcontent"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="tab-physical" class="col-md-12 tab-pane fade">
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-tabs nav-justified top5">
+                                            <li class="active"><a data-toggle="tab" href="#tab-motor">MOTOR EXAMINATION</a></li>
+                                            <li><a data-toggle="tab" href="#tab-rom">ROM</a></li>
+                                            <li><a data-toggle="tab" href="#tab-measurement">MEASUREMENT</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tab-content col-md-12" style="margin-bottom: 10px;">
+                                        <div id="tab-motor" class="col-md-12 tab-pane fade in active withborder">
+                                             <div class="col-md-4">
+                                               <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table background-orange" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.MotorExamination,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedMotorExaminationTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                             </div>
+
+                                            </div>
+                                              <div class="col-md-8 top15" id="motorexaminationcontent">
+                                            </div>
+                                        </div>
+                                        <div id="tab-rom" class="col-md-12 tab-pane fade withborder">
+                                            <div class="col-md-4">
+                                                <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.Rom,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedRomTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 top15" id="romcontent">
+                                            </div>
+                                        </div>
+                                        <div id="tab-measurement" class="col-md-12 tab-pane fade withborder">
+                                              <div class="col-md-4">
+                                                  <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.Measurement,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedMeasurementTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            </div>
+                                              <div class="col-md-8 top15" id="measurmentcontent">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-pressure" class="col-md-12 tab-pane fade ">
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-tabs nav-justified top5">
+                                            <li class="active"><a data-toggle="tab" href="#tab-sore">PRESSURE SORE</a></li>
+                                            <li><a data-toggle="tab" href="#tab-abilities">FUNCTIONAL ABILITIES</a></li>
+                                            <li><a data-toggle="tab" href="#tab-advice">ADVICE ON DISCHARGE</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tab-content col-md-12" style="margin-bottom: 10px;">
+                                        <div id="tab-sore" class="col-md-12 tab-pane fade in active withborder">
+                                            <div class="col-md-4">
+                                                <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.PressureSore,dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedPressureSoreTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                             <div class="col-md-8 top15" id="pressuresorecontent"></div>
+                                        </div>
+                                        <div id="tab-abilities" class="col-md-12 tab-pane fade withborder">
+                                              <div class="col-md-4">
+                                                  <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.FunctionalAbilities, dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedFunctionalAbilitiesTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                  </div>
+
+                                            </div>
+                                             <div class="col-md-8 top15" id="functionalabilitiescontent"></div>
+                                        </div>
+                                        <div id="tab-advice" class="col-md-12 tab-pane fade withborder">
+                                            <div class="col-md-4">
+                                                <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table default-color" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:100%;"> EXAMINATIONS </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.AdviceOnDischarge, dataTableOptions:{paging:false,destroy: true,searching:false,info:false}}" style="overflow: auto; height: 200px;">
+                                                        <tr data-bind="click:function(){return $root.SelectedAdviceOnDischargeTab(Id)}">
+                                                            <td data-bind="text:Name"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                    </div>
+                                            </div>
+                                             <div class="col-md-8 top15" id="adviceondischargecontent"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-procedure" class="col-md-12 tab-pane fade ">
+                                     <div class="col-md-12 top15 default-color tab-physiogroup">
+                                                <table class="table" style="background-color:white;" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th> SlNo. </th>
+                                                            <th> Procedures </th>
+                                                            <th> Therapist </th>
+                                                            <th> Start DateTime </th>
+                                                            <th> End DateTime </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody data-bind="dataTablesForEach:{data:$root.OrderedProcedures,dataTableOptions:{paging:true,destroy: true,searching:true,info:false , 'columns': [
+                                                                                    { 'width': '4%' },
+                                                                                     null,
+                                                                                     null,
+                                                                                    { 'width': '15%'},
+                                                                                    { 'width': '15%'}
+                                                                                    ]}}" style="overflow: auto; height: 200px;">
+                                                        <tr>
+                                                            <td data-bind="text:  ($index() + 1)"></td>
+                                                            <td data-bind="text: Procedures"></td>
+                                                            <td data-bind="text: Therapist"></td>
+                                                            <td data-bind="text: moment(ProcedureStartDatetime).format('DD-MMM-YYYY hh:mm a')"></td>
+                                                            <td data-bind="text: moment(ProcedureEndDatetime).format('DD-MMM-YYYY hh:mm a')"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                             </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-12">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="SearchPatient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style="width: 90%; z-index: 1200;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <header>Search Patient</header>
+                <button id="SClose" class="btn-danger inverse btn btn-sm pull-right no-border" data-dismiss="modal" style="margin-top: -25px;">
+                    <span class="glyphicon glyphicon-off"></span>Close
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">First Name</label>
+                            <div class="col-md-9">
+                                <input id="SFirstName" class="form-control" data-bind="value:$root.SearchParam.firstName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Middle Name</label>
+
+                            <div class="col-md-9">
+                                <input id="SMiddleName" class="form-control" data-bind="value:$root.SearchParam.middleName" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Last Name</label>
+                            <div class="col-md-9">
+                                <input id="SLastName" class="form-control" data-bind="value:$root.SearchParam.lastName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Family Name</label>
+                            <div class="col-md-9">
+                                <input id="SFamilyName" class="form-control" data-bind="value:$root.SearchParam.familyName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Father Name</label>
+                            <div class="col-md-9">
+                                <input id="SfatherName" class="form-control" data-bind="value:$root.SearchParam.fatherName" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Age</label>
+                            <div class="col-md-4">
+                                <input id="SAge" class="form-control"
+                                    data-bind="value:$root.SearchParam.age" />
+                            </div>
+                            <div class="col-md-5">
+                                <select id="SAgeType" class="form-control"
+                                    data-bind="options:$root.AgeTypes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.ageType, 
+                                                   select2: {placeholder: 'Select Option', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Sex</label>
+                            <div class="col-md-9">
+                                <select id="SSex" class="form-control"
+                                    data-bind="options:$root.Sexes, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.sex 
+                                    ,select2: {placeholder: 'Select Gender', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+
+                            <label class="top5 col-md-3 label reg-label">Reg. Date</label>
+
+
+
+                            <div class="col-md-4">
+                                <input id="SFrom" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true,datetimepicker:$root.SearchParam.fromDate,
+                                                 datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                            </div>
+                            <label class="top5 col-md-1 label reg-label">To</label>
+                            <div class="col-md-4">
+                                <input id="STo" class="form-control" style="font-size: 10px !important; font-weight: 600;"
+                                    data-bind="enable:$root.hasDate() ==true, datetimepicker:$root.SearchParam.toDate,
+                                                 datepickerOptions:{format: 'DD-MMM-YYYY'}" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Place</label>
+                            <div class="col-md-9">
+                                <select id="SCity" class="form-control"
+                                    data-bind="options:$root.Cities, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.city,
+                                                select2:{placeholder: 'Select City', allowClear: true}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top5 col-md-3 label reg-label">Country</label>
+                            <div class="col-md-9">
+                                <select id="SCountry" class="form-control"
+                                    data-bind="options:$root.Countries, optionsText:'Name', optionsValue:'Id', value:$root.SearchParam.country
+                                                   ,select2: {placeholder: 'Select Country', allowClear: true}">
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 top20">
+                            <input type="checkbox" data-bind="value:true, checked:$root.hasDate" style="margin-left: -70px; margin-top: 10px;" />
+                            <button id="SSearch" class="btn btn-primary" data-bind="click:$root.GetPatients" style="margin-left: 60px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-search"></span>Go
+                            </button>
+                            <button id="SClear" class="btn btn-default" data-bind="click:$root.ClearSearchFilters" style="margin-left: 20px; margin-top: -10px;">
+                                <span class="glyphicon glyphicon-erase"></span>Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 top20">
+
+                        <div class="col-md-12" style="background-color: #dcdfe0!important;">
+                            <br />
+                            <table id="PatientTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No. </th>
+                                        <th>PIN</th>
+                                        <th>Patient Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Place</th>
+                                        <th>Country</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody data-bind="dataTablesForEach:{data:$root.SearchedPatient,dataTableOptions:{paging:true,destroy: true}}" style="overflow: auto; height: 200px;">
+                                    <tr data-bind="click:$root.SelectPatient">
+                                        <td data-bind="text:SlNo"></td>
+                                        <td data-bind="text:IACRegno"></td>
+                                        <td data-bind="text:PatientName"></td>
+                                        <td data-bind="text:AgeStr"></td>
+                                        <td data-bind="text:Sex"></td>
+                                        <td data-bind="text:Phone"></td>
+                                        <td data-bind="text:CityName"></td>
+                                        <td data-bind="text:CountryName"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<input id="urlAcions" class="hidden" 
+
+    data-getinpatients ="@Url.Action("GetInpatients")"
+    data-getinpatientdetails ="@Url.Action("GetInpatientDetails")"
+    data-getpatient ="@Url.Action("GetPatient")"
+    data-searchpatient ="@Url.Action("SearchPatient")"
+    data-getemployee="@Url.Action("getEmployee")"
+    data-searchpatientpin="@Url.Action("searchPatientPin")"
+    data-getphysioexam="@Url.Action("GetPhysioExam")"
+    data-geticddescriptionop="@Url.Action("GetLatestIcdDescriptionOP")"
+    data-geticddescriptionip="@Url.Action("GetLatestIcdDescriptionIP")"
+    data-getptdicharge="@Url.Action("GetPTDischarge")"
+    data-getptexamdetails="@Url.Action("GetPTExaminationDetails")"
+    data-getorderedprocedure="@Url.Action("getRHOrderDetailProcedure")"
+    data-adddischargesummary="@Url.Action("AddSummary")"
+    data-updatedischargesummary="@Url.Action("UpdateSummary")"
+
+    data-getopdischargedicddescriptionop="@Url.Action("GetOPDischargeIcdDescription")"
+    data-getopdischargedprocedureop="@Url.Action("getDischargeOPProcedure")"
+    data-previewdischarge="@Url.Action("PrintDischarge")"
+/>
+
+@section Scripts{
+    <script type="text/javascript" src="~/Content/plugins/datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="~/Content/plugins/alphanum/jquery.alphanum.js"></script>
+    <script type="text/javascript" src="~/Scripts/File/Discharge.js"></script>
+  
+    <script type="text/javascript">
+        var viewModel = {};
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(this.Model));
+            viewModel = new Discharge(data);
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}
+

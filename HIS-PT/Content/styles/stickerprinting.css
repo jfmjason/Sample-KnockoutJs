@@ -1,0 +1,27 @@
+
+.modal-dialog {
+    position: fixed;
+    top: 30% !important;
+    left: 30%;
+}
+
+.panel-heading {
+    font-size:120%;
+}
+span.glyphicon-alert {
+    font-size: 3.2em;
+}
+modal-dialog panel-body alert{
+    margin-bottom:0px !important;
+}
+
+span.glyphicon-saved {
+    font-size: 3.2em;
+}
+span.glyphicon-warning-sign {
+    font-size: 3.2em;
+}
+span.glyphicon-info-sign {
+    font-size: 3.2em;
+}
+

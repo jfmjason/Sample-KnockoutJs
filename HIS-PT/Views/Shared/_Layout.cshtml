@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    @{        
+        FormsIdentity id = (FormsIdentity)User.Identity;
+        FormsAuthenticationTicket ticket = id.Ticket;
+        var d = ticket.UserData.Split('|');    
+    }
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width" />
+
+    @Styles.Render("~/Styles/plugins/global")
+    @Styles.Render("~/Styles/global")
+    @Styles.Render("~/Styles/custom")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/plugins/global")
+    @Scripts.Render("~/Scripts/global")
+    @Scripts.Render("~/Scripts/custom")
+    @Scripts.Render("~/Scripts/DateTimePlugins")
+    @Scripts.Render("~/Scripts/knockoutjs")
+   
+</head>
+@*<body style="background-image: url('../Images/tri.png') !important;">*@
+    <body>
+    <nav class="navbar navbar-default navbar-fixed-top yamm" role="navigation">
+        <div class="application-title">
+            <div class="pull-left cAR-title"id="txtstationame" 
+                data-urlsecure="@Url.Action("SecurityFeature", "Base", new { area = "" })" 
+                data-urlfunction="@Url.Action("SecurityFunction", "Base", new { area = "" })"
+                data-appmenu="@Url.Action("GetMenu", "Home", new { area = "" })"
+                data-appissue="@Url.Action("GetApplicationIssue", "Home", new { area = "" })"
+                >
+                @ViewBag.Title                 
+            </div>
+            <div class="pull-right AR_user_cont">
+                <ul class="nav navbar-nav ar_mini_top_menu" style="margin-right: 5px !important;">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="divider" style="height: 1px !important; padding: 0 !important;"></li>
+                            <li>
+                                <a href="@Url.Action("LogOff", "Home", new { area = "" }, null)"><span class="glyphicon glyphicon-log-out"></span>Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <user><span class="glyphicon glyphicon-user"></span>  User: @User.Identity.Name!</user>
+            </div>
+            <div class="clear-both"></div>
+        </div>
+        <div class="clear-both"></div>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home"></span></a>
+            </div>
+            <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+                <div id="url-menu"></div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid cAR-panel-top cAR-margin-top _mainiframe" style="background-color:#dcdfe0;min-height: calc(100% - 20px);">
+       
+      @RenderBody()
+     
+    </div>
+
+    @RenderPage("~/Views/Shared/_printPreview.cshtml")
+
+    @RenderPage("~/Views/Shared/_Footer.cshtml")
+    
+    @RenderSection("printscript", required: false)
+    @RenderSection("scripts", required: false)
+    @RenderSection("styles", required: false)
+
+    
+</body>
+</html>

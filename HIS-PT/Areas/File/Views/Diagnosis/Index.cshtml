@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Patient Diagnosis";
+}
+
+<div class="container">
+    <div class="row top5 default-color " style="padding: 10px;border: 1px solid black">
+        <header class="header-uppercase col-md-5">Patient Diagnosis</header>
+
+
+         <button id="Clear" class="btn-primary pull-right   btn btn-sm"  style="margin-left:10px;" data-bind="click:$root.ResetFields">
+            <span class="glyphicon glyphicon-erase"></span> Clear
+        </button>
+
+        
+        <a  class="btn-primary pull-right   btn btn-sm" href="@Url.Action("Index", "Home", new { Area = "" })">
+            <span class="glyphicon glyphicon-arrow-left"></span> Back
+        </a>
+
+      
+    </div>
+    <div class="row top5 default-color">
+       <div class="row top10">
+            <div class="col-md-12 top10">
+                <div class="col-md-12">
+                    <label class="top5 col-md-2 label reg-label">Patient Type</label>
+                    <div class="col-md-4">
+                        <div class="radio top10">
+                            <label class="col-md-offset-1 col-md-5 withhover">
+                                <input type="radio" name="optradio" data-bind="value :1, checked: $root.PTDischarge.PatientType">IP</label>
+                            <label class="col-md-6 withhover">
+                                <input type="radio" name="optradio" data-bind="value:0, checked: $root.PTDischarge.PatientType  ">OP</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                      <label class="top10 col-md-3 label reg-label">Ward</label>
+                    <div class="col-md-9 top5">
+                        <select  class="form-control select2"
+                            data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.PTDischarge.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Bed', allowClear: true},
+                                                                     attr:{disabled:$root.PTDischarge.PatientType() == 0}">
+                        </select>
+                    </div>
+                     <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">PIN</label>
+                    <div class="col-md-9">
+                        <!-- ko if: $root.PTDischarge.PatientType() == 1 -->
+                        <select id="IPPins" class="form-control select2"
+                            data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'IACRegno', value:$root.PTDischarge.IPIDOPID, 
+                                                   select2:{placeholder: 'Select a Pin', allowClear: true}">
+                        </select>
+                        <!-- /ko -->
+                        <!-- ko if:$root.PTDischarge.PatientType() == 0 -->
+                        <div class="input-group col-md-12">
+                            <input id="OpPinTxt" class="form-control"
+                                data-bind="textInput:$root.PTDischarge.PIN,executeOnEnter:$root.GetPatient" />
+                            <span class="input-group-btn ">
+                                <button class="btn btn-primary btn-xs glyphicon glyphicon-search" type="submit" style="border-radius: 0px !important; margin-top: -2px;"
+                                    data-bind="click:$root.SearchPatient">
+                                </button>
+                            </span>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                    <div class="col-md-12"></div>
+                     <label class="col-md-3 label reg-label">Name</label>
+                    <div class="col-md-9">
+                        <!-- ko if: $root.PTDischarge.PatientType() == 1 -->
+                        <select id="SelectPatientNames" class="form-control select2"
+                            data-bind="
+                                                                     options:$root.Patients, optionsValue:'IPOPID',optionsText:'PatientName', value:$root.PTDischarge.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Patient Name', allowClear: true}">
+                        </select>
+                        <!-- /ko -->
+                        <!-- ko if: $root.PTDischarge.PatientType() == 0 -->
+                        <input id="PatientNameTxt" class="form-control select2" readonly
+                            data-bind="value:$root.PTDischarge.PatientName" />
+                        <!-- /ko -->
+                    </div>
+
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Primary Consultant</label> 
+                    <div class="col-md-9">
+                        <input id="CategoryStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.ConsultantName" />
+                    </div>
+                   
+                </div>
+                <div class="col-md-6" data-bind="visible:$root.LatestIcdDisplay() == false">
+                    <label class="top10 col-md-3 label reg-label">Bed</label>
+                    <div class="col-md-9 top5">
+                        <select id="SelectedBed" class="form-control select2"
+                            data-bind="options:$root.Patients, optionsValue:'IPOPID',optionsText:'BedName', value:$root.PTDischarge.IPIDOPID, 
+                                                                     select2:{placeholder: 'Select Bed', allowClear: true},
+                                                                     attr:{disabled:$root.PTDischarge.PatientType() == 0}">
+                        </select>
+                    </div>
+                     <div class="col-md-12"></div>
+
+                    <label class="top5 col-md-3 label reg-label">Ward</label>
+                    <div class="col-md-9">
+                        <input id="WardStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.WardStr" />
+                    </div>
+                  
+                    <div class="col-md-12"></div>
+                    <label class="top10 col-md-3 label reg-label">Age</label>
+                    <div class="col-md-4 top5">
+                        <input id="AgeStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.AgeStr" />
+                    </div>
+                    <label class="top10 col-md-1 label reg-label">Sex</label>
+                    <div class="col-md-4 top5">
+                        <input id="SexStr" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.SexStr" />
+                    </div>
+                   
+                    <div class="col-md-12"></div>
+                    <label class="top5 col-md-3 label reg-label">Admit DateTime</label>
+                    <div class="col-md-9">
+                        <input id="CompanyCode" class="form-control" readonly
+                            data-bind="value:$root.PTDischarge.RefferedBy" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

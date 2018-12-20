@@ -1,0 +1,8 @@
+.dataTables_scroll {
+    border:1px solid; 
+    border-color:#585858!important;
+}
+
+.table tbody tr td {
+    font-size: 12px!important;
+}
